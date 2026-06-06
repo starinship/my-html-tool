@@ -1,0 +1,1422 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hemodialysis Nursing Note</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d8dee9;
+      --brand: #0f766e;
+      --brand-dark: #115e59;
+      --accent: #b45309;
+      --danger: #b42318;
+      --soft: #eef6f5;
+      --shadow: 0 12px 32px rgba(15, 23, 42, .08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #f8fafc 0%, var(--bg) 42%, #eef3f8 100%);
+      font-family: Arial, "Microsoft JhengHei", "PingFang TC", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .84);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1260px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    main {
+      width: min(1260px, 100%);
+      margin: 0 auto;
+      padding: 18px 24px 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .section + .section {
+      margin-top: 14px;
+    }
+
+    .section-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .body {
+      padding: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    label {
+      display: block;
+      color: #344054;
+      font-size: 13px;
+      line-height: 1.25;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, .16);
+    }
+
+    .checks {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .check {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid #d6dce6;
+      border-radius: 6px;
+      background: #fff;
+      color: #273444;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .combo-check {
+      min-height: 42px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid #d6dce6;
+      border-radius: 6px;
+      background: #fff;
+      color: #273444;
+      font-size: 13px;
+    }
+
+    .combo-check.slim {
+      grid-template-columns: auto auto 1fr;
+    }
+
+    .combo-check.wide {
+      grid-template-columns: auto auto minmax(116px, 1fr) minmax(92px, .8fr) minmax(86px, .8fr);
+    }
+
+    .combo-check input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--brand);
+    }
+
+    .combo-check select,
+    .combo-check input[type="number"],
+    .combo-check input[type="text"] {
+      min-height: 32px;
+      padding: 5px 8px;
+      font-size: 13px;
+    }
+
+    .combo-check:has(input[type="checkbox"]:checked) {
+      border-color: var(--brand);
+      background: var(--soft);
+    }
+
+    .check input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--brand);
+      flex: 0 0 auto;
+    }
+
+    .check:has(input:checked) {
+      border-color: var(--brand);
+      background: var(--soft);
+    }
+
+    .under-first-column {
+      grid-column: 1;
+    }
+
+    .segment {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid #d6dce6;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .segment input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .segment label {
+      margin: 0;
+      min-height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      color: #475467;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .segment label:has(input:checked) {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      min-height: 40px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      background: #fff;
+      color: #344054;
+      border-color: #cbd5e1;
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .btn.primary:hover {
+      background: var(--brand-dark);
+    }
+
+    .btn.warning {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .output-wrap {
+      position: sticky;
+      top: 86px;
+    }
+
+    .note-output {
+      min-height: 56px;
+      overflow: hidden;
+      resize: none;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 15px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .note-blocks {
+      display: grid;
+      gap: 10px;
+    }
+
+    .note-block {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .note-block-head {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px 6px 10px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .note-block textarea {
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .status {
+      min-height: 20px;
+      color: var(--brand-dark);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .danger-text {
+      color: var(--danger);
+    }
+
+    .row-gap {
+      margin-top: 14px;
+    }
+
+    .blood-panel {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid #d6dce6;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .blood-panel:has(#bloodGasEnabled:checked) {
+      border-color: var(--brand);
+      background: var(--soft);
+    }
+
+    .blood-title {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .blood-title input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--brand);
+    }
+
+    .unit-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .unit-copy {
+      min-height: 38px;
+      padding: 7px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      color: #273444;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .unit-copy:hover {
+      border-color: var(--brand);
+      background: var(--soft);
+    }
+
+    .mini-field label {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .mini-field input {
+      min-height: 34px;
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+
+    .unit-field {
+      position: relative;
+    }
+
+    .unit-field input {
+      padding-right: 54px;
+    }
+
+    .unit-field .unit {
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    @media (max-width: 980px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .output-wrap {
+        position: static;
+      }
+    }
+
+    @media (max-width: 700px) {
+      header {
+        padding: 14px;
+      }
+
+      main {
+        padding: 14px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .toolbar {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .toolbar .btn,
+      .actions .btn {
+        flex: 1 1 140px;
+      }
+
+      .grid,
+      .grid.two,
+      .grid.three,
+      .checks,
+      .blood-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div>
+          <h1>Hemodialysis Nursing Note</h1>
+          <div class="subtle">D / A / R / T</div>
+        </div>
+        <div class="toolbar">
+          <button class="btn primary" id="generateTop" type="button">生成</button>
+          <button class="btn" id="copyTop" type="button">複製</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <form id="noteForm" autocomplete="off">
+        <section class="section">
+          <div class="section-header">
+            <h2>D: Data</h2>
+          </div>
+          <div class="body">
+            <div class="grid">
+              <div>
+                <label for="renalStatus">AKI / ESRD</label>
+                <select id="renalStatus">
+                  <option value="ESRD" selected>ESRD</option>
+                  <option value="AKI">AKI</option>
+                </select>
+              </div>
+              <div>
+                <label for="treatmentMode">Treatment</label>
+                <select id="treatmentMode">
+                  <option value="HD" selected>HD</option>
+                  <option value="HDF">HDF</option>
+                  <option value="HP+HD">HP+HD</option>
+                </select>
+              </div>
+              <div>
+                <label>Gain kg</label>
+                <span class="grid two">
+                  <select id="gainWhole" aria-label="增重整數">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                  </select>
+                  <select id="gainDecimal" aria-label="增重小數">
+                    <option value="0" selected>0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                  </select>
+                </span>
+              </div>
+            </div>
+
+            <div class="grid row-gap">
+              <div>
+                <label for="accessSide">Access side</label>
+                <select id="accessSide">
+                  <option value="L" selected>L</option>
+                  <option value="R">R</option>
+                </select>
+              </div>
+              <div>
+                <label for="accessType">Access type</label>
+                <select id="accessType">
+                  <option value="AVF" selected>AVF</option>
+                  <option value="AVG">AVG</option>
+                  <option value="JPC">JPC</option>
+                  <option value="JTC">JTC</option>
+                  <option value="FPC">FPC</option>
+                  <option value="FTC">FTC</option>
+                </select>
+              </div>
+              <div>
+                <label for="thrill">Thrill</label>
+                <select id="thrill">
+                  <option value="thrill well">thrill well</option>
+                  <option value="thrill weak">thrill weak</option>
+                  <option value="no thrill">no thrill</option>
+                  <option value="E/S clear">E/S clear</option>
+                  <option value="">不加入</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid row-gap">
+              <div>
+                <label for="wingSuture">縫線</label>
+                <select id="wingSuture">
+                  <option value="" selected>無</option>
+                  <option value="left">左</option>
+                  <option value="right">右</option>
+                  <option value="bilateral">雙側</option>
+                </select>
+              </div>
+              <div>
+                <label>管口縫線</label>
+                <span class="check"><input type="checkbox" id="tubeSuture"> 固定</span>
+              </div>
+            </div>
+
+            <div class="grid row-gap">
+              <div>
+                <label for="preBp">透前 BP</label>
+                <span class="unit-field">
+                  <input id="preBp" type="text">
+                  <span class="unit">mmHg</span>
+                </span>
+              </div>
+              <div>
+                <label for="prePulse">P</label>
+                <span class="unit-field">
+                  <input id="prePulse" type="text" inputmode="numeric">
+                  <span class="unit">/min</span>
+                </span>
+              </div>
+              <div>
+                <label for="preBg">透前 BG</label>
+                <span class="unit-field">
+                  <input id="preBg" type="text">
+                  <span class="unit">mmol/l</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <label>帶氧氣來</label>
+                <span class="combo-check wide">
+                  <input type="checkbox" id="keepOxygenEnabled">
+                  <span>keep O<sub>2</sub></span>
+                  <select id="keepOxygenFlow" aria-label="帶氧流量">
+                    <option value="1">1L/min</option>
+                    <option value="2" selected>2L/min</option>
+                    <option value="3">3L/min</option>
+                    <option value="4">4L/min</option>
+                    <option value="5">5L/min</option>
+                    <option value="6">6L/min</option>
+                    <option value="7">7L/min</option>
+                    <option value="8">8L/min</option>
+                    <option value="9">9L/min</option>
+                    <option value="10">10L/min</option>
+                    <option value="12">12L/min</option>
+                    <option value="15">15L/min</option>
+                  </select>
+                  <select id="keepOxygenDevice" aria-label="帶氧方式">
+                    <option value="NC" selected>NC</option>
+                    <option value="SM">SM</option>
+                    <option value="NRM">NRM</option>
+                    <option value="TM">TM</option>
+                    <option value="VM">VM</option>
+                  </select>
+                  <span class="unit-field">
+                    <input id="keepSpo2" type="number" min="0" max="100" step="1" placeholder="SpO2">
+                    <span class="unit">%</span>
+                  </span>
+                </span>
+            </div>
+
+            <div class="row-gap">
+              <label>Condition</label>
+              <div class="grid three">
+                <div>
+                  <label for="consciousness">意識</label>
+                  <select id="consciousness">
+                    <option value="conscious" selected>神清</option>
+                    <option value="confused">混亂</option>
+                    <option value="drowsy">嗜睡</option>
+                    <option value="coma">昏迷</option>
+                  </select>
+                </div>
+                <span class="check"><input type="checkbox" data-group="d" value="no bleeding" checked> no bleeding</span>
+                <span class="check"><input type="checkbox" data-group="d" value="no complaint" checked> no complaint</span>
+                <span class="combo-check">
+                  <input type="checkbox" id="menstruationEnabled">
+                  <span>主訴月經第</span>
+                  <select id="menstruationDay" aria-label="月經第幾天">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                  </select>
+                </span>
+                <span class="combo-check">
+                  <input type="checkbox" id="sobEnabled">
+                  <span>SOB, SpO<sub>2</sub></span>
+                  <input id="spo2" type="number" min="0" max="100" step="1" placeholder="%">
+                </span>
+                <span class="combo-check">
+                  <input type="checkbox" id="edemaEnabled">
+                  <span>下肢水腫</span>
+                  <select id="edemaGrade" aria-label="下肢水腫程度">
+                    <option value="+">+</option>
+                    <option value="++">++</option>
+                    <option value="+++">+++</option>
+                  </select>
+                </span>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <label for="dExtra">D 補充</label>
+              <input id="dExtra" type="text" placeholder="例如: BP stable before HD">
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>A: Action</h2>
+          </div>
+          <div class="body">
+            <div class="grid">
+              <div>
+                <label>Set UF ml</label>
+                <span class="grid two">
+                  <select id="ufThousand" aria-label="Set UF 千位">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                  <select id="ufHundred" aria-label="Set UF 百位">
+                    <option value="0">0</option>
+                    <option value="100">100</option>
+                    <option value="200" selected>200</option>
+                    <option value="300">300</option>
+                    <option value="400">400</option>
+                    <option value="500">500</option>
+                    <option value="600">600</option>
+                    <option value="700">700</option>
+                    <option value="800">800</option>
+                    <option value="900">900</option>
+                  </select>
+                </span>
+              </div>
+              <div>
+                <label for="hours">Hours</label>
+                <select id="hours">
+                  <option value="2">2</option>
+                  <option value="2.5">2.5</option>
+                  <option value="3">3</option>
+                  <option value="3.5">3.5</option>
+                  <option value="4" selected>4</option>
+                  <option value="04:15">04:15</option>
+                  <option value="4.5">4.5</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+              <div>
+                <label for="anticoagSelect">Anticoagulant</label>
+                <select id="anticoagSelect">
+                  <option value="clexane:5">Clexane 5mg</option>
+                  <option value="clexane:10">Clexane 10mg</option>
+                  <option value="clexane:15">Clexane 15mg</option>
+                  <option value="clexane:20" selected>Clexane 20mg</option>
+                  <option value="clexane:25">Clexane 25mg</option>
+                  <option value="clexane:30">Clexane 30mg</option>
+                  <option value="clexane:35">Clexane 35mg</option>
+                  <option value="clexane:40">Clexane 40mg</option>
+                  <option value="heparinFree">Heparin Free</option>
+                  <option value="warfarin">on warfarin</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid two row-gap">
+              <div>
+                <label>ECG monitor</label>
+                <span class="combo-check slim">
+                  <input type="checkbox" id="ecgEnabled">
+                  <span>ECG</span>
+                  <select id="ecgRhythm" aria-label="ECG rhythm">
+                    <option value="SR" selected>SR</option>
+                    <option value="AF">AF</option>
+                    <option value="ST">ST</option>
+                    <option value="SB">SB</option>
+                    <option value="VT">VT</option>
+                  </select>
+                </span>
+              </div>
+              <div>
+                <label>用氧情況</label>
+                <span class="combo-check slim">
+                  <input type="checkbox" id="oxygenEnabled">
+                  <span>O<sub>2</sub></span>
+                  <span class="grid two">
+                    <select id="oxygenFlow" aria-label="氧氣流量">
+                      <option value="1">1L/min</option>
+                      <option value="2" selected>2L/min</option>
+                      <option value="3">3L/min</option>
+                      <option value="4">4L/min</option>
+                      <option value="5">5L/min</option>
+                      <option value="6">6L/min</option>
+                      <option value="7">7L/min</option>
+                      <option value="8">8L/min</option>
+                      <option value="9">9L/min</option>
+                      <option value="10">10L/min</option>
+                      <option value="12">12L/min</option>
+                      <option value="15">15L/min</option>
+                    </select>
+                    <select id="oxygenDevice" aria-label="給氧方式">
+                      <option value="NC" selected>NC</option>
+                      <option value="SM">SM</option>
+                      <option value="NRM">NRM</option>
+                      <option value="TM">TM</option>
+                      <option value="VM">VM</option>
+                    </select>
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <label>Procedure</label>
+              <div class="checks">
+                <span class="check"><input type="checkbox" id="echoPuncture"> ECHO機下穿刺順利</span>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <label>Blood gas</label>
+              <div class="blood-panel">
+                <div class="blood-title">
+                  <input type="checkbox" id="bloodGasEnabled">
+                  <span>blood gas</span>
+                </div>
+                <div class="mini-field">
+                  <label for="bgTHb">tHb g/dL</label>
+                  <input id="bgTHb" type="number" step="0.1">
+                </div>
+                <div class="mini-field">
+                  <label for="bgK">K mmol/L</label>
+                  <input id="bgK" type="number" step="0.1">
+                </div>
+                <div class="mini-field">
+                  <label for="bgCa">Ca mmol/L</label>
+                  <input id="bgCa" type="number" step="0.001">
+                </div>
+                <span class="combo-check">
+                  <input type="checkbox" id="paO2Enabled">
+                  <span>PaO<sub>2</sub></span>
+                  <input id="bgPaO2" type="number" step="1" placeholder="mmHg">
+                </span>
+                <span class="combo-check">
+                  <input type="checkbox" id="paCO2Enabled">
+                  <span>PaCO<sub>2</sub></span>
+                  <input id="bgPaCO2" type="number" step="1" placeholder="mmHg">
+                </span>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <label for="aExtra">A 補充</label>
+              <input id="aExtra" type="text" placeholder="例如: kept warm and observed closely">
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>R: Response</h2>
+          </div>
+          <div class="body">
+            <div class="grid">
+              <div>
+                <label for="finishedHours">Finished hrs</label>
+                <select id="finishedHours">
+                  <option value="2">2</option>
+                  <option value="2.5">2.5</option>
+                  <option value="3">3</option>
+                  <option value="3.5">3.5</option>
+                  <option value="4" selected>4</option>
+                  <option value="4.5">4.5</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+              <div>
+                <label>Total UF ml</label>
+                <span class="grid two">
+                  <select id="totalUfThousand" aria-label="Total UF 千位">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                  <select id="totalUfHundred" aria-label="Total UF 百位">
+                    <option value="0" selected>0</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="300">300</option>
+                    <option value="400">400</option>
+                    <option value="500">500</option>
+                    <option value="600">600</option>
+                    <option value="700">700</option>
+                    <option value="800">800</option>
+                    <option value="900">900</option>
+                  </select>
+                </span>
+              </div>
+              <div>
+                <label>Vital sign</label>
+                <span class="check"><input type="checkbox" id="vitalStable" checked> stable</span>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <div class="grid three">
+                <div>
+                  <label for="postBp">透後 BP</label>
+                  <span class="unit-field">
+                    <input id="postBp" type="text">
+                    <span class="unit">mmHg</span>
+                  </span>
+                </div>
+                <div>
+                  <label for="postPulse">P</label>
+                  <span class="unit-field">
+                    <input id="postPulse" type="text" inputmode="numeric">
+                    <span class="unit">/min</span>
+                  </span>
+                </div>
+                <div>
+                  <label for="postBg">透後 BG</label>
+                  <span class="unit-field">
+                    <input id="postBg" type="text">
+                    <span class="unit">mmol/l</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <label>透後用氧</label>
+              <span class="combo-check wide">
+                <input type="checkbox" id="postOxygenEnabled">
+                <span>keep O<sub>2</sub></span>
+                <select id="postOxygenFlow" aria-label="透後氧氣流量">
+                  <option value="1">1L/min</option>
+                  <option value="2" selected>2L/min</option>
+                  <option value="3">3L/min</option>
+                  <option value="4">4L/min</option>
+                  <option value="5">5L/min</option>
+                  <option value="6">6L/min</option>
+                  <option value="7">7L/min</option>
+                  <option value="8">8L/min</option>
+                  <option value="9">9L/min</option>
+                  <option value="10">10L/min</option>
+                  <option value="12">12L/min</option>
+                  <option value="15">15L/min</option>
+                </select>
+                <select id="postOxygenDevice" aria-label="透後給氧方式">
+                  <option value="NC" selected>NC</option>
+                  <option value="SM">SM</option>
+                  <option value="NRM">NRM</option>
+                  <option value="TM">TM</option>
+                  <option value="VM">VM</option>
+                </select>
+                <span class="unit-field">
+                  <input id="postOxygenSpo2" type="number" min="0" max="100" step="1" placeholder="SpO2">
+                  <span class="unit">%</span>
+                </span>
+              </span>
+            </div>
+
+            <div class="row-gap">
+              <label>After HD</label>
+              <div class="checks">
+                <span class="check"><input type="checkbox" id="hemostasisSmooth"> 止血過程順利</span>
+                <span class="check"><input type="checkbox" data-group="r" value="no complaint" checked> no complaint</span>
+                <span class="check under-first-column"><input type="checkbox" id="unokinaseLock"> unokinase lock</span>
+                <span class="combo-check wide">
+                  <input type="checkbox" id="nextHdEnabled">
+                  <span>next HD</span>
+                  <input id="nextHdDate" type="date">
+                  <select id="nextHdShift" aria-label="next HD 班別">
+                    <option value="AM" selected>AM</option>
+                    <option value="PM">PM</option>
+                    <option value="第3班">第3班</option>
+                  </select>
+                </span>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <label>ESA</label>
+              <div class="checks">
+                <span class="combo-check">
+                  <input type="checkbox" id="darbepoetinEnabled">
+                  <span>darbepoetin alfa</span>
+                  <input id="darbepoetinDose" type="text" placeholder="mcg">
+                </span>
+                <span class="combo-check">
+                  <input type="checkbox" id="epoetinBetaEnabled">
+                  <span>epoetin beta</span>
+                  <input id="epoetinBetaDose" type="text" placeholder="IU">
+                </span>
+              </div>
+            </div>
+
+            <div class="row-gap">
+              <label for="rExtra">R 補充</label>
+              <input id="rExtra" type="text" placeholder="例如: post HD body weight checked">
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>T: Teaching</h2>
+          </div>
+          <div class="body">
+            <div class="checks">
+              <span class="check"><input type="checkbox" id="punctureInfectionTeaching" checked> 透析前洗手</span>
+              <span class="check"><input type="checkbox" id="catheterInfectionTeaching"> 保持個人衛生</span>
+              <span class="check"><input type="checkbox" id="lowPotassiumTeaching"> 低鉀飲食</span>
+              <span class="combo-check">
+                <input type="checkbox" id="fluidTeaching">
+                <span>餘</span>
+                <input id="remainingKg" type="text" placeholder="kg">
+              </span>
+            </div>
+            <div class="row-gap">
+              <label for="tExtra">T 補充</label>
+              <input id="tExtra" type="text" placeholder="自訂衛教句子">
+            </div>
+          </div>
+        </section>
+
+      </form>
+
+      <aside class="output-wrap">
+        <section class="section">
+          <div class="section-header">
+            <h2>D / A / R / T</h2>
+            <div class="actions">
+              <button class="btn primary" id="generate" type="button">生成</button>
+              <button class="btn" id="copy" type="button">複製全部</button>
+              <button class="btn warning" id="reset" type="button">重設</button>
+            </div>
+          </div>
+          <div class="body">
+            <div class="note-blocks">
+              <div class="note-block">
+                <div class="note-block-head"><span>D</span><button class="btn copy-part" data-part="d" type="button">複製</button></div>
+                <textarea id="outputD" class="note-output" spellcheck="false"></textarea>
+              </div>
+              <div class="note-block">
+                <div class="note-block-head"><span>A</span><button class="btn copy-part" data-part="a" type="button">複製</button></div>
+                <textarea id="outputA" class="note-output" spellcheck="false"></textarea>
+              </div>
+              <div class="note-block">
+                <div class="note-block-head"><span>R</span><button class="btn copy-part" data-part="r" type="button">複製</button></div>
+                <textarea id="outputR" class="note-output" spellcheck="false"></textarea>
+              </div>
+              <div class="note-block">
+                <div class="note-block-head"><span>T</span><button class="btn copy-part" data-part="t" type="button">複製</button></div>
+                <textarea id="outputT" class="note-output" spellcheck="false"></textarea>
+              </div>
+            </div>
+            <div class="status" id="status"></div>
+            <div class="subtle danger-text">請按院內規範及實際病況核對後再貼入病歷。</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>單位</h2>
+          </div>
+          <div class="body">
+            <div class="unit-buttons">
+              <button class="unit-copy" type="button" data-unit="SpO₂">SpO₂</button>
+              <button class="unit-copy" type="button" data-unit="O₂">O₂</button>
+              <button class="unit-copy" type="button" data-unit="L/min">L/min</button>
+              <button class="unit-copy" type="button" data-unit="mmHg">mmHg</button>
+              <button class="unit-copy" type="button" data-unit="g/dL">g/dL</button>
+              <button class="unit-copy" type="button" data-unit="mmol/l">mmol/l</button>
+              <button class="unit-copy" type="button" data-unit="HCO₃⁻">HCO₃⁻</button>
+              <button class="unit-copy" type="button" data-unit="⁺">⁺</button>
+              <button class="unit-copy" type="button" data-unit="units">units</button>
+              <button class="unit-copy" type="button" data-unit="mcg">mcg</button>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function checkedValues(group) {
+      return Array.from(document.querySelectorAll(`input[data-group="${group}"]:checked`))
+        .map((item) => item.value.trim())
+        .filter(Boolean);
+    }
+
+    function radioValue(name) {
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      return selected ? selected.value : "";
+    }
+
+    function cleanNumber(value) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return "";
+      return Number.isInteger(num) ? String(num) : String(num).replace(/0+$/, "").replace(/\.$/, "");
+    }
+
+    function selectedValue(id) {
+      return $(id).value;
+    }
+
+    function gainKg() {
+      const whole = selectedValue("gainWhole");
+      const decimal = selectedValue("gainDecimal");
+      return decimal === "0" ? whole : `${whole}.${decimal}`;
+    }
+
+    function ufMl(thousandId, hundredId) {
+      return (Number(selectedValue(thousandId)) * 1000) + Number(selectedValue(hundredId));
+    }
+
+    function fieldValue(id) {
+      return $(id).value.trim();
+    }
+
+    function appendUnit(value, unit) {
+      if (!value) return "";
+      return value.toLowerCase().includes(unit.toLowerCase()) ? value : `${value}${unit}`;
+    }
+
+    function accessSutureText() {
+      const sutures = [];
+      const wingText = {
+        left: "左側翼仔有縫線固定",
+        right: "右側翼仔有縫線固定",
+        bilateral: "雙側翼仔有縫線固定"
+      }[selectedValue("wingSuture")];
+      if (wingText) sutures.push(wingText);
+      if ($("tubeSuture").checked) sutures.push("管口有縫線固定");
+      return sutures.length ? `(${sutures.join(",")})` : "";
+    }
+
+    function postHdInjectionText(enabledId, doseId, drugName, unit) {
+      if (!$(enabledId).checked) return "";
+      const dose = fieldValue(doseId);
+      return `post HD ${drugName}${dose ? ` ${appendUnit(dose, unit)}` : ""} IV`;
+    }
+
+    function infectionTeachingText() {
+      const details = [];
+      if ($("punctureInfectionTeaching").checked) {
+        details.push("每次透析前以肥皂洗手，保持穿刺部位清潔");
+      }
+      if ($("catheterInfectionTeaching").checked) {
+        details.push("保持個人衛生，導管出口處應保持清潔乾燥，避免拉扯或碰觸");
+      }
+      return details.length ? `衛教病人預防感染的重要性，${details.join("；")}。` : "";
+    }
+
+    function oxygenText() {
+      if (!$("oxygenEnabled").checked) return "";
+      return `O₂ ${selectedValue("oxygenFlow")}L/min by ${selectedValue("oxygenDevice")}`;
+    }
+
+    function keepOxygenText() {
+      if (!$("keepOxygenEnabled").checked) return "";
+      const spo2 = fieldValue("keepSpo2");
+      const base = `keep O₂: ${selectedValue("keepOxygenFlow")}L/min by ${selectedValue("keepOxygenDevice")}`;
+      return spo2 ? `${base}, SpO₂ ${spo2}%` : base;
+    }
+
+    function postOxygenText() {
+      if (!$("postOxygenEnabled").checked) return "";
+      const spo2 = fieldValue("postOxygenSpo2");
+      const base = `keep O₂: ${selectedValue("postOxygenFlow")}L/min by ${selectedValue("postOxygenDevice")}`;
+      return spo2 ? `${base}, SpO₂ ${spo2}%` : base;
+    }
+
+    function sobText() {
+      if (!$("sobEnabled").checked) return "";
+      const spo2 = fieldValue("spo2");
+      return spo2 ? `SOB, SpO₂ ${spo2}%` : "SOB";
+    }
+
+    function ecgText() {
+      if (!$("ecgEnabled").checked) return "";
+      return `ECG monitor:${selectedValue("ecgRhythm")}`;
+    }
+
+    function hdDurationText(hours) {
+      return hours === "04:15" ? "04:15" : `${hours}hrs`;
+    }
+
+    function formatDateDMY(value) {
+      if (!value) return "";
+      const [year, month, day] = value.split("-");
+      return `${day}/${month}/${year}`;
+    }
+
+    function nextHdText() {
+      if (!$("nextHdEnabled").checked || !selectedValue("nextHdDate")) return "";
+      return `next HD:${formatDateDMY(selectedValue("nextHdDate"))} ${selectedValue("nextHdShift")}`;
+    }
+
+    function bloodGasText() {
+      if (!$("bloodGasEnabled").checked) return "";
+      const parts = [
+        `tHb:${fieldValue("bgTHb")}g/dL`,
+        `K:${fieldValue("bgK")}mmol/l`,
+        `Ca:${fieldValue("bgCa")}mmol/l`
+      ];
+      if ($("paO2Enabled").checked && fieldValue("bgPaO2")) {
+        parts.push(`PaO₂:${fieldValue("bgPaO2")}mmHg`);
+      }
+      if ($("paCO2Enabled").checked && fieldValue("bgPaCO2")) {
+        parts.push(`PaCO₂:${fieldValue("bgPaCO2")}mmHg`);
+      }
+      return `blood gas: ${parts.join(", ")}`;
+    }
+
+    function anticoagText() {
+      const value = selectedValue("anticoagSelect");
+      if (value.startsWith("clexane:")) {
+        return `clexane ${value.split(":")[1]}mg IV`;
+      }
+      if (value === "heparinFree") return "heparin free";
+      if (value === "warfarin") return "on warfarin";
+      return "";
+    }
+
+    function joinSentence(parts) {
+      return parts.filter(Boolean).join(", ").replace(/\s+/g, " ").trim();
+    }
+
+    function buildNote() {
+      const renalStatus = selectedValue("renalStatus");
+      const treatmentMode = selectedValue("treatmentMode");
+      const diagnosis = `${renalStatus} on ${treatmentMode}`;
+      const gain = gainKg();
+      const access = `${selectedValue("accessSide")}${selectedValue("accessType")}`;
+      const thrill = $("thrill").value;
+      const accessText = `${[access, thrill].filter(Boolean).join(" ")}${accessSutureText()}`;
+      const dParts = [diagnosis, selectedValue("consciousness")];
+      if (gain) dParts.push(`gain ${gain}kg`);
+      dParts.push(...checkedValues("d"));
+      if (accessText) dParts.push(accessText);
+      if (fieldValue("preBp")) dParts.push(`pre HD BP:${appendUnit(fieldValue("preBp"), "mmHg")}`);
+      if (fieldValue("prePulse")) dParts.push(`P:${appendUnit(fieldValue("prePulse"), "/min")}`);
+      if (fieldValue("preBg")) dParts.push(`BG:${appendUnit(fieldValue("preBg"), "mmol/l")}`);
+      if (sobText()) dParts.push(sobText());
+      if (keepOxygenText()) dParts.push(keepOxygenText());
+      if ($("menstruationEnabled").checked) dParts.push(`主訴月經第${selectedValue("menstruationDay")}天`);
+      if ($("edemaEnabled").checked) dParts.push(`下肢水腫(${selectedValue("edemaGrade")})`);
+      if ($("dExtra").value.trim()) dParts.push($("dExtra").value.trim());
+
+      const ufSet = ufMl("ufThousand", "ufHundred");
+      const hours = selectedValue("hours");
+      const aParts = [];
+      if ($("echoPuncture").checked) aParts.push("ECHO機下穿刺順利");
+      if (ufSet && hours) aParts.push(`set UF ${ufSet}ml/${hdDurationText(hours)} ${treatmentMode}`);
+      else if (ufSet) aParts.push(`Set UF ${ufSet}ml ${treatmentMode}`);
+      if (anticoagText()) aParts.push(anticoagText());
+      if (ecgText()) aParts.push(ecgText());
+      if (oxygenText()) aParts.push(oxygenText());
+      if (bloodGasText()) aParts.push(bloodGasText());
+      if ($("aExtra").value.trim()) aParts.push($("aExtra").value.trim());
+
+      const finishedHours = selectedValue("finishedHours");
+      const totalUf = ufMl("totalUfThousand", "totalUfHundred");
+      const rParts = [];
+      if (finishedHours) rParts.push(`Finished ${hdDurationText(finishedHours)} ${treatmentMode}`);
+      else rParts.push(`Finished ${treatmentMode}`);
+      if (totalUf) rParts.push(`total UF -${totalUf}ml`);
+      if ($("hemostasisSmooth").checked) rParts.push("止血過程順利");
+      if (fieldValue("postBp")) rParts.push(`post HD BP:${appendUnit(fieldValue("postBp"), "mmHg")}`);
+      if (fieldValue("postPulse")) rParts.push(`P:${appendUnit(fieldValue("postPulse"), "/min")}`);
+      if (fieldValue("postBg")) rParts.push(`BG:${appendUnit(fieldValue("postBg"), "mmol/l")}`);
+      if (postOxygenText()) rParts.push(postOxygenText());
+      rParts.push(...checkedValues("r"));
+      if ($("vitalStable").checked) rParts.push("vital sign stable");
+      if ($("unokinaseLock").checked) rParts.push("unokinase lock");
+      const darbepoetinText = postHdInjectionText("darbepoetinEnabled", "darbepoetinDose", "darbepoetin alfa", "mcg");
+      const epoetinBetaText = postHdInjectionText("epoetinBetaEnabled", "epoetinBetaDose", "epoetin beta", "IU");
+      if (darbepoetinText) rParts.push(darbepoetinText);
+      if (epoetinBetaText) rParts.push(epoetinBetaText);
+      if (nextHdText()) rParts.push(nextHdText());
+      if ($("rExtra").value.trim()) rParts.push($("rExtra").value.trim());
+
+      const teaching = [];
+      if (infectionTeachingText()) teaching.push(infectionTeachingText());
+      if ($("lowPotassiumTeaching").checked) teaching.push("衛教病人低鉀飲食。");
+      if ($("fluidTeaching").checked && fieldValue("remainingKg")) {
+        teaching.push(`餘${appendUnit(fieldValue("remainingKg"), "kg")},衛教病人限水囑不適求診.`);
+      }
+      if ($("tExtra").value.trim()) teaching.push($("tExtra").value.trim());
+
+      return {
+        d: `${joinSentence(dParts)}.`,
+        a: `${joinSentence(aParts)}.`,
+        r: `${joinSentence(rParts)}.`,
+        t: teaching.length ? teaching.join(" ") : ""
+      };
+    }
+
+    function generate() {
+      const note = buildNote();
+      $("outputD").value = note.d;
+      $("outputA").value = note.a;
+      $("outputR").value = note.r;
+      $("outputT").value = note.t;
+      resizeOutputs();
+      $("status").textContent = "已生成";
+      window.setTimeout(() => $("status").textContent = "", 1600);
+      return note;
+    }
+
+    function resizeOutputs() {
+      ["outputD", "outputA", "outputR", "outputT"].forEach((id) => {
+        const area = $(id);
+        area.style.height = "auto";
+        area.style.height = `${area.scrollHeight + 2}px`;
+      });
+    }
+
+    async function copyText(text, fallbackId) {
+      try {
+        await navigator.clipboard.writeText(text);
+        $("status").textContent = "已複製";
+      } catch (error) {
+        $(fallbackId).focus();
+        $(fallbackId).select();
+        document.execCommand("copy");
+        $("status").textContent = "已選取並複製";
+      }
+      window.setTimeout(() => $("status").textContent = "", 1800);
+    }
+
+    async function copyNote() {
+      const note = generate();
+      const text = [
+        "Hemodialysis",
+        `D:${note.d}`,
+        `A:${note.a}`,
+        `R:${note.r}`,
+        `T:${note.t}`
+      ].join("\n");
+      await copyText(text, "outputD");
+    }
+
+    async function copyPart(part) {
+      const note = generate();
+      const idMap = { d: "outputD", a: "outputA", r: "outputR", t: "outputT" };
+      await copyText(note[part] || "", idMap[part]);
+    }
+
+    async function copyUnit(unit) {
+      await copyText(unit, "outputT");
+    }
+
+    function resetForm() {
+      $("noteForm").reset();
+      setTodayDefaults();
+      generate();
+    }
+
+    function todayISO() {
+      const now = new Date();
+      const offset = now.getTimezoneOffset();
+      const local = new Date(now.getTime() - offset * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    function setTodayDefaults() {
+      $("nextHdDate").value = todayISO();
+    }
+
+    ["generate", "generateTop"].forEach((id) => $(id).addEventListener("click", generate));
+    ["copy", "copyTop"].forEach((id) => $(id).addEventListener("click", copyNote));
+    document.querySelectorAll(".copy-part").forEach((button) => {
+      button.addEventListener("click", () => copyPart(button.dataset.part));
+    });
+    document.querySelectorAll(".unit-copy").forEach((button) => {
+      button.addEventListener("click", () => copyUnit(button.dataset.unit));
+    });
+    $("reset").addEventListener("click", resetForm);
+    $("noteForm").addEventListener("input", generate);
+    $("noteForm").addEventListener("change", generate);
+
+    setTodayDefaults();
+    generate();
+  </script>
+</body>
+</html>
