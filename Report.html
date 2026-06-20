@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSLA × SPCX 投資分析報告 — 2026/06/20</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --line:#2d3645;
+    --txt:#e6edf3; --muted:#9aa7b5; --accent:#4da3ff; --green:#3fb950;
+    --red:#f85149; --amber:#e3b341; --purple:#bc8cff;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+    line-height:1.65;font-size:15px;}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 22px 80px;}
+  header.cover{border:1px solid var(--line);border-radius:16px;padding:30px 28px;
+    background:linear-gradient(135deg,#161b22 0%,#1c2330 100%);margin-bottom:26px;}
+  header.cover h1{margin:0 0 6px;font-size:26px;letter-spacing:.5px;}
+  header.cover .sub{color:var(--muted);font-size:14px;}
+  .tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;
+    border:1px solid var(--line);color:var(--muted);margin-right:6px;margin-top:10px;}
+  h2{font-size:20px;margin:38px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line);}
+  h2 .n{color:var(--accent);font-weight:700;margin-right:8px;}
+  h3{font-size:16px;margin:22px 0 8px;color:var(--accent);}
+  p{margin:10px 0;}
+  .muted{color:var(--muted);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .card.tsla{border-top:3px solid var(--red);}
+  .card.spcx{border-top:3px solid var(--accent);}
+  .verdict{font-size:18px;font-weight:700;margin:4px 0 8px;}
+  .v-over{color:var(--red);} .v-fair{color:var(--amber);} .v-good{color:var(--green);}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;}
+  th,td{padding:9px 11px;text-align:right;border-bottom:1px solid var(--line);}
+  th:first-child,td:first-child{text-align:left;}
+  thead th{background:var(--panel2);color:var(--muted);font-weight:600;
+    border-bottom:2px solid var(--line);position:sticky;}
+  tbody tr:hover{background:#1a2230;}
+  .up{color:var(--green);} .down{color:var(--red);} .flat{color:var(--amber);}
+  .pill{font-size:12px;padding:2px 8px;border-radius:6px;font-weight:600;}
+  .pill.r{background:rgba(248,81,73,.15);color:var(--red);}
+  .pill.g{background:rgba(63,185,80,.15);color:var(--green);}
+  .pill.a{background:rgba(227,179,65,.15);color:var(--amber);}
+  ul{margin:8px 0;padding-left:20px;} li{margin:5px 0;}
+  .callout{background:var(--panel2);border-left:3px solid var(--accent);
+    border-radius:8px;padding:12px 16px;margin:14px 0;}
+  .callout.warn{border-left-color:var(--amber);}
+  .callout.risk{border-left-color:var(--red);}
+  .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;}
+  .kv:last-child{border-bottom:none;}
+  .kv span:first-child{color:var(--muted);}
+  .timeline{position:relative;margin:14px 0;padding-left:22px;}
+  .timeline::before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--line);}
+  .tl{position:relative;margin:12px 0;}
+  .tl::before{content:"";position:absolute;left:-22px;top:5px;width:10px;height:10px;
+    border-radius:50%;background:var(--accent);border:2px solid var(--bg);}
+  .tl .date{font-weight:700;color:var(--accent);font-size:13px;}
+  .disclaimer{font-size:12px;color:var(--muted);border:1px dashed var(--line);
+    border-radius:10px;padding:14px 16px;margin-top:30px;}
+  .src{font-size:12px;color:var(--muted);}
+  .src a{color:var(--accent);text-decoration:none;}
+  .bignum{font-size:22px;font-weight:700;}
+  footer{margin-top:40px;text-align:center;color:var(--muted);font-size:12px;}
+  .chartgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:720px){.chartgrid{grid-template-columns:1fr;}}
+  .chartbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 10px;}
+  .chartbox h4{margin:0 0 4px;font-size:14px;color:var(--txt);}
+  .chartbox .cnote{font-size:11.5px;color:var(--muted);margin:0 0 8px;}
+  .chartbox canvas{max-height:230px;}
+
+  /* ===== iPhone / 手機版型 ===== */
+  @media (max-width:600px){
+    body{font-size:15px;-webkit-text-size-adjust:100%;}
+    .wrap{padding:16px 13px 60px;}
+    header.cover{padding:20px 17px;border-radius:14px;}
+    header.cover h1{font-size:20px;line-height:1.35;}
+    header.cover .sub{font-size:12.5px;}
+    .tag{font-size:11px;padding:2px 8px;}
+    h2{font-size:17px;margin:28px 0 12px;}
+    h3{font-size:15px;}
+    .bignum{font-size:20px;}
+    .verdict{font-size:16px;}
+    .card{padding:15px 15px;}
+    .callout{padding:11px 13px;font-size:13.5px;}
+    /* 表格改為可橫向滑動，避免在小螢幕被擠壓 */
+    table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      white-space:nowrap;border:1px solid var(--line);border-radius:10px;}
+    th,td{padding:8px 12px;font-size:13px;}
+    .kv{font-size:13px;}
+    .kv span:first-child{padding-right:10px;}
+    .timeline{padding-left:20px;}
+    .src{font-size:11px;}
+    .chartbox canvas{max-height:260px;}
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <h1>特斯拉（TSLA）× SpaceX（SPCX）投資分析報告</h1>
+  <div class="sub">資深分析師視角 · 數據截至 2026 年 6 月 20 日 · 全文數據已交叉核實</div>
+  <div>
+    <span class="tag">美股</span>
+    <span class="tag">EV / 自動駕駛</span>
+    <span class="tag">太空 / 衛星算力</span>
+    <span class="tag">事件驅動：合併傳聞</span>
+  </div>
+</header>
+
+<!-- ===== 摘要 ===== -->
+<h2><span class="n">0</span>一頁摘要：我的核心判斷</h2>
+<div class="grid2">
+  <div class="card tsla">
+    <div class="muted">TSLA · NASDAQ</div>
+    <div class="bignum">≈ $398.5</div>
+    <div class="verdict v-over">估值：明顯偏貴</div>
+    <p class="muted" style="font-size:13.5px;margin:6px 0 0">本業（車＋能源）僅能解釋 $120–180/股，其餘 $220+ 全是市場替 robotaxi、Optimus 兩個尚未落地的選擇權預付。180x PE、14x sales，容錯率＝零，且近期催化劑偏空。</p>
+  </div>
+  <div class="card spcx">
+    <div class="muted">SPCX · NASDAQ（2026/6/12 上市）· 報價 6/19</div>
+    <div class="bignum">≈ $185</div>
+    <div class="verdict v-fair">估值：偏高，質地優於 TSLA</div>
+    <p class="muted" style="font-size:13.5px;margin:6px 0 0">市值約 <b>$2.44 兆</b>。誠實拆帳：可辨識現金流業務（Starlink ≈$500–700B＋發射 ≈$150–250B）合計約 <b>$0.7–0.9 兆、占 30–37%</b>；其餘約 <b>$1.55–1.75 兆（63–70%）是選擇權</b>（Starship／軌道算力／xAI）。優於 TSLA 不在現金流占比，而在 Starlink 高速成長＋選擇權有實際進度。</p>
+  </div>
+</div>
+<div class="callout">
+  <b>一句話：</b>兩者同樣「貴」，且都是<b>選擇權為主</b>（TSLA 本業約占市值 40%、SPCX 硬資產約占 30%）。差別在質地 —— <span class="up">SPCX 的現金流核心（Starlink）高速成長且選擇權有實際進度（已飛、已收 xAI、已有樣星）</span>，<span class="down">TSLA 本業連兩年萎縮、robotaxi 還卡在約 20 台等 v15</span>。兩者估值高度相關於同一個人與同一套敘事，合併傳聞讓命運進一步綁定。
+</div>
+
+<!-- ===== 即時快照 ===== -->
+<h2><span class="n">1</span>即時估值快照</h2>
+<table>
+  <thead><tr><th>指標</th><th>TSLA</th><th>SPCX</th></tr></thead>
+  <tbody>
+    <tr><td>股價（6/19）</td><td>≈ $398.5</td><td>≈ $185（盤中 $172–192）</td></tr>
+    <tr><td>市值</td><td>≈ $1.2–1.5 兆</td><td>≈ $2.44 兆</td></tr>
+    <tr><td>52 週區間</td><td>$288.77 – $498.83</td><td>$135 – $225.64（已從高點回約 13%）</td></tr>
+    <tr><td>本益比（trailing）</td><td class="down">≈ 180x</td><td class="flat">未盈利期估值（EBITDA 為主）</td></tr>
+    <tr><td>市銷率</td><td class="down">≈ 14x</td><td class="flat">≈ 15x trailing（forward ≈ 8x）</td></tr>
+    <tr><td>EV/EBITDA</td><td class="muted">高（本業微利）</td><td>≈ 30x（$2.44兆 / $8B）</td></tr>
+    <tr><td>下一催化劑</td><td>Q2 財報 7/22</td><td>鎖倉到期供給、Starship Flight 13</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 估值判斷 ===== -->
+<h2><span class="n">2</span>估值判斷（SOTP 分部拆解）</h2>
+<div class="grid2">
+  <div class="card tsla">
+    <h3>TSLA — 拆得開的「貴」</h3>
+    <div class="kv"><span>① 汽車＋能源（可建模）</span><span>$120–180 / 股</span></div>
+    <div class="kv"><span>② Robotaxi（純選擇權）</span><span>單位經濟 ≈ 0</span></div>
+    <div class="kv"><span>③ Optimus（更遠選擇權）</span><span>2026 無營收意義</span></div>
+    <div class="kv"><span>市價 $398 隱含的選擇權溢價</span><span class="down">≈ $220+</span></div>
+    <p class="muted" style="font-size:13px">市價＝「兩個選擇權都成功、且不會太晚」。方向不否定，但價格不給任何犯錯空間。</p>
+  </div>
+  <div class="card spcx">
+    <h3>SPCX — 拆帳見真章（市值 ≈ $2.44 兆）</h3>
+    <div class="kv"><span>Starlink 現金流核心</span><span>≈ $500–700B（25–29%）</span></div>
+    <div class="kv"><span>發射業務（政府現金牛）</span><span>≈ $150–250B（6–10%）</span></div>
+    <div class="kv"><span>→ 可辨識硬資產小計</span><span>≈ $0.7–0.9 兆（30–37%）</span></div>
+    <div class="kv"><span>選擇權（Starship/軌道算力/xAI/D2C）</span><span class="flat">≈ $1.55–1.75 兆（63–70%）</span></div>
+    <p class="muted" style="font-size:13px"><b>誠實說：硬資產是少數、選擇權才是多數。</b>但 Starlink 高速成長、選擇權有實際進度（已飛、已收 xAI、已有樣星）—— 這才是「質地優於 TSLA」的真義，不是現金流占比更高。</p>
+  </div>
+</div>
+
+<!-- ===== 基本面對比 ===== -->
+<h2><span class="n">3</span>基本面對比 · 過去兩年</h2>
+
+<h3>TSLA — 連續兩年交付下滑，本業在降速</h3>
+<table>
+  <thead><tr><th>指標</th><th>2023</th><th>2024</th><th>2025</th><th>趨勢</th></tr></thead>
+  <tbody>
+    <tr><td>全年交付（萬輛）</td><td>181</td><td>179</td><td>164</td><td class="down">連 2 年↓ (-8.6%)</td></tr>
+    <tr><td>總營收</td><td>$96.8B</td><td>$97.7B</td><td class="muted">約持平*</td><td class="flat">停滯</td></tr>
+    <tr><td>毛利率</td><td>≈18.2%</td><td>17.9%</td><td>≈18%（Q3）</td><td class="flat">低檔徘徊</td></tr>
+    <tr><td>GAAP 淨利</td><td class="muted">~$15B†</td><td>$7.93B</td><td class="muted">壓縮中</td><td class="down">↓</td></tr>
+    <tr><td>能源儲能營收</td><td>$6.0B</td><td>$10.1B</td><td class="up">續增</td><td class="up">+67% (24)</td></tr>
+  </tbody>
+</table>
+<p class="src">* 2025 全年總營收尚未完整公布（Q1 $19.3B、Q3 $28.1B）；交付 164 萬輛為已確認數。&nbsp; † 2023 淨利含一次性遞延稅款利益，不宜直接類比。&nbsp; Q1 2026 交付 35.8 萬輛（季減 14%），為 2026 最大單日跌幅來源。</p>
+<div class="callout warn">
+  <b>解讀：</b>核心汽車業務 <span class="down">連續兩年衰退</span>、面對 BYD 等競爭份額受壓、毛利在低檔；唯一亮點是能源儲能。也就是說 —— <b>支撐 180x 估值的不是現在的損益表，而是對未來 robotaxi/Optimus 的想像。</b>
+</div>
+
+<h3>SpaceX — 營收兩年近乎三級跳，Starlink 是引擎</h3>
+<table>
+  <thead><tr><th>指標</th><th>2023</th><th>2024</th><th>2025</th><th>2026E</th></tr></thead>
+  <tbody>
+    <tr><td>總營收</td><td>$8.7B</td><td>$14.2B</td><td>≈$16B</td><td class="up">$27–30B</td></tr>
+    <tr><td>　·年增率</td><td class="muted">—</td><td class="up">+63%</td><td class="up">+13%</td><td class="up">+70%↑</td></tr>
+    <tr><td>Starlink 營收</td><td>$4.2B</td><td>$8.2B</td><td>$10.6–11.4B</td><td class="up">續增</td></tr>
+    <tr><td>　·占總營收</td><td>48%</td><td>58%</td><td>61–67%</td><td>主力</td></tr>
+    <tr><td>　·Starlink EBITDA</td><td class="muted">—</td><td class="muted">—</td><td>$5.8B（54%）</td><td class="up">高利潤</td></tr>
+    <tr><td>發射業務營收</td><td>$3.5B</td><td>$4.2B</td><td>$4.1B</td><td class="flat">成長有限</td></tr>
+    <tr><td>Falcon 發射次數</td><td>96</td><td>134</td><td>165</td><td class="up">↑</td></tr>
+    <tr><td>EBITDA</td><td class="muted">—</td><td class="muted">—</td><td>$8B</td><td class="up">FCF≈$5B</td></tr>
+  </tbody>
+</table>
+<div class="callout">
+  <b>解讀：</b>與 TSLA 完全相反 —— SpaceX 是<span class="up">真實、加速、且已轉正自由現金流</span>的成長機器。Starlink 2025 約 $10.6–11.4B 營收、<b>$5.8B EBITDA（54% 利潤率）</b>；Morgan Stanley（Adam Jonas）估其<b>單獨估值即可達約 $500B</b>。發射業務是穩定政府現金牛，<b>Starlink 才是估值主引擎</b>，2026/5 起漲價＝從「搶裝機量」轉「收割 ARPU」的成熟訊號。
+</div>
+
+<!-- ===== Starlink 用戶 ===== -->
+<h2><span class="n">4</span>Starlink 用戶成長（你指定）</h2>
+<table>
+  <thead><tr><th>時點</th><th>全球活躍用戶</th><th>區間增量 / 備註</th></tr></thead>
+  <tbody>
+    <tr><td>2023 年底</td><td>≈ 230 萬</td><td>當年 +約 100 萬</td></tr>
+    <tr><td>2024 年底</td><td>≈ 460 萬</td><td class="up">一年翻倍（+230 萬）</td></tr>
+    <tr><td>2025 年 12 月</td><td>&gt; 900 萬</td><td class="up">年底日增約 21,000 戶</td></tr>
+    <tr><td>2026 年 2 月</td><td>&gt; 1,000 萬</td><td class="up">最後 100 萬僅花 53 天 · 涵蓋 160+ 國</td></tr>
+  </tbody>
+</table>
+<div class="callout">
+  <b>意義：</b>從 230 萬到 1,000 萬僅約兩年，是消費網路史上最陡採用曲線之一。<b>用戶數是 SPCX 估值最關鍵的單一可驗證指標</b> —— 漲價後若用戶仍續增（量價齊升），估值有撐；若漲價導致流失加速，則 ARPU 故事要打折。建議每季盯緊「淨增用戶 × ARPU」。
+</div>
+
+<!-- ===== 趨勢圖表 ===== -->
+<h2><span class="n">📈</span>數據趨勢圖（折線）</h2>
+<div class="chartgrid">
+  <div class="chartbox">
+    <h4>Starlink 全球活躍用戶（百萬）</h4>
+    <p class="cnote">最陡採用曲線：兩年從 230 萬 → 逾 1,000 萬</p>
+    <canvas id="chartStarlink"></canvas>
+  </div>
+  <div class="chartbox">
+    <h4>SpaceX 年營收（十億美元）</h4>
+    <p class="cnote">2023→2026E 近乎四級跳，Starlink 為主引擎</p>
+    <canvas id="chartSpacexRev"></canvas>
+  </div>
+  <div class="chartbox">
+    <h4>TSLA 全年交付（萬輛）</h4>
+    <p class="cnote">連續兩年下滑 —— 本業在萎縮</p>
+    <canvas id="chartTslaDeliv"></canvas>
+  </div>
+  <div class="chartbox">
+    <h4>Tesla Robotaxi 車隊（Austin，台）</h4>
+    <p class="cnote">2025/12 衝到約 35 台峰值後掉頭向下</p>
+    <canvas id="chartRobotaxi"></canvas>
+  </div>
+</div>
+<p class="src">註：圖表需連網載入 Chart.js；於瀏覽器開啟本檔即自動繪製。Robotaxi 為 Austin 載客車隊估計值（含監督期），2026 後以無監督活躍車為主。</p>
+
+<!-- ===== 成長引擎 / 未來方向 ===== -->
+<h2><span class="n">5</span>未來方向與成長引擎（含已核實的 robotaxi 真相）</h2>
+
+<h3>TSLA Robotaxi — 「地圖在膨脹，車隊在收縮」</h3>
+<table>
+  <thead><tr><th>項目</th><th>實際數據（2026/6 核實）</th></tr></thead>
+  <tbody>
+    <tr><td>Austin 無監督活躍車</td><td>≈ 21 台（rider 車隊 26、另 42 台 Cybercab 測試）</td></tr>
+    <tr><td>Austin 30 天未現身（inactive）</td><td>78 台</td></tr>
+    <tr><td>德州全境授權車</td><td class="down">42 台 vs Waymo 577 台（不到 1/10）</td></tr>
+    <tr><td>近 7 天無監督行程占比</td><td>≈ 55.6%（18 趟中 10 趟）</td></tr>
+    <tr><td>服務範圍</td><td>6/3 擴及整個 Austin 都會區 245 平方英里</td></tr>
+    <tr><td>放量條件</td><td class="flat">等 FSD v15 重寫，ramp 推遲至 2026 底 / 2027 初</td></tr>
+  </tbody>
+</table>
+<div class="callout risk">
+  <b>關鍵洞察：</b>服務「面積」鋪滿全城的同時，實際車隊反而從 4 月底約 25 台縮到約 20 台。這是教科書級的<b>「敘事面積 vs 營運密度」背離</b>——市場替標題上修估值，真實單位經濟近乎為零。<b>FSD v15 不交付，整個 robotaxi 估值就是空的。</b>
+</div>
+
+<h3>Robotaxi 車隊增長軌跡（Austin）— 峰值已過</h3>
+<table>
+  <thead><tr><th>時點</th><th>車隊規模</th><th>事件 / 增量</th></tr></thead>
+  <tbody>
+    <tr><td>2025/6 上線</td><td>≈ 10 台</td><td>Model Y、5 英里半徑、車內有安全員</td></tr>
+    <tr><td>2025/9</td><td>≈ 15 台</td><td class="up">車隊 +50%、範圍擴至 173 平方英里</td></tr>
+    <tr><td>2025/11</td><td>≈ 29 台</td><td class="up">持續爬升</td></tr>
+    <tr><td>2025/12–2026/1</td><td class="up">≈ 35 台（峰值）</td><td>vs Musk 承諾「年底 500 台」嚴重落空</td></tr>
+    <tr><td>2026/4</td><td>≈ 25 台（無監督峰值）</td><td>無監督車從個位數爬到 25</td></tr>
+    <tr><td>2026/6（最新）</td><td class="down">≈ 20–21 台</td><td class="down">連月下滑，等 FSD v15 才放量</td></tr>
+  </tbody>
+</table>
+<div class="callout warn">
+  <b>增長量真相：</b>上線一年，車隊從約 10 台只到峰值約 35 台、現回落到約 20 台 —— <b>淨增量以「十位數」計</b>，而非 Musk 喊的「一年 200 萬台」。對比 <b>Waymo 每週 50 萬趟付費、全無人、10 城營運</b>，特斯拉目前仍在驗證階段。
+</div>
+
+<h3>各地推進情況（含國際）</h3>
+<table>
+  <thead><tr><th>地點</th><th>狀態</th><th>備註</th></tr></thead>
+  <tbody>
+    <tr><td>Austin（德州）</td><td class="up">營運中 · 無監督</td><td>首發城市，全都會區 245 平方英里，約 20 台</td></tr>
+    <tr><td>Dallas（德州）</td><td class="flat">營運中 · 無監督</td><td>初期僅 1 台起步</td></tr>
+    <tr><td>Houston（德州）</td><td class="flat">營運中 · 無監督</td><td>初期僅 1 台，覆蓋 Willowbrook / Jersey Village</td></tr>
+    <tr><td>San Francisco 灣區</td><td class="flat">營運中 · 需安全員</td><td>仍非無監督</td></tr>
+    <tr><td>Phoenix / Miami / Orlando / Tampa / Las Vegas</td><td class="down">延後</td><td>原列 H1 2026 七城計畫，5 城跳票</td></tr>
+    <tr><td>美國其他州</td><td class="muted">規劃中</td><td>Musk 稱年底「遍布全美 / dozen 個州」，待 v15</td></tr>
+    <tr><td>國際（歐洲 / 亞洲等）</td><td class="down">尚無</td><td>Tesla robotaxi <b>目前 0 個海外市場</b>；反觀 Waymo 已布局東京、倫敦</td></tr>
+  </tbody>
+</table>
+<div class="callout risk">
+  <b>推進評估：</b>原訂 2026 上半年七城，實際只新增 Dallas、Houston 兩城且各 1 台起步，<b>5 城延後</b>；<b>國際市場掛零</b>。「全美遍布」與「火星級野心」的敘事，與地面上「三城＋灣區、總計約 20 餘台」的現實落差極大 —— 這正是 TSLA 估值最脆弱的環節。
+</div>
+
+<h3>SpaceX 第二曲線 — SpaceXAI / 軌道數據中心</h3>
+<ul>
+  <li><b>2026/2 收購 xAI</b>（Grok 母公司）：把「火箭＋衛星＋AI 模型」整合進同一實體，Starship 首次有了自家高價值酬載。</li>
+  <li><b>AI1 軌道算力衛星（6/8 公布）</b>：單星 70 米翼展（寬過波音 747-8），平均 120kW／峰值 150kW，約等於一個 NVIDIA GB300 機櫃；Starship 單次可載 30–50 顆。</li>
+  <li><b>願景</b>：擴至百萬顆 AI 衛星星座，靠軌道不間斷太陽能＋真空散熱繞開地面電網與水冷瓶頸，宣稱 2–3 年內成為「最低成本 AI 算力來源」。FCC 申請已於 1/28 遞交。</li>
+</ul>
+<div class="callout warn">
+  這條線把 SpaceX 從「發射＋連接」重新定義為<b>「發射→連接→算力」垂直整合的太空基礎設施平台</b>，每層餵下一層需求 —— 這才是 $2.44 兆估值中那 6–7 成「選擇權溢價」的底層敘事。但目前仍是 <b>PPT＋FCC 文件＋一顆樣星</b>，散熱／輻射／在軌維護／單位成本全未驗證，屬 3–5 年選擇權。
+</div>
+
+<h3>Starship — SPCX 的「賠率放大器」與最大執行風險</h3>
+<ul>
+  <li>V3：124 米高、全 Raptor 3、&gt;100 噸 LEO 運力；Flight 12 已於 <b>2026/5/22</b> 首飛，Flight 13 預計 7–8 月。</li>
+  <li>2026 下半年目標：開始實際入軌投送酬載、長航時測試、在軌推進劑轉移測試。</li>
+  <li><span class="down">最大 binary 風險</span>：Musk 公開要在 2026 末火星窗口發射 5 艘無人 Starship，需約 <b>40–60 次發射密度</b>塞進短窗口 —— 人類火箭史上從未有過，幾乎注定 over-promise。卡關則「太空算力＋火星」整條選擇權估值要打折。</li>
+</ul>
+
+<!-- ===== 投資建議 ===== -->
+<h2><span class="n">6</span>投資建議與投資意涵</h2>
+<div class="grid2">
+  <div class="card tsla">
+    <h3>TSLA</h3>
+    <p><span class="pill r">現價不追多現股</span></p>
+    <ul style="font-size:14px">
+      <li>風險報酬<b>不對稱（下檔大）</b>：本業降速＋近期催化劑偏空（v15 跳票、7/22 財報、牌照節奏）。</li>
+      <li>表達方向宜用<b>期權結構</b>而非裸多，控制 180x 容錯為零的尾部風險。</li>
+      <li>真正的基本面買點通常出現在<b>某次 catalyst 證偽後的恐慌</b>，回到接近本業估值（$180–250 區）才具吸引力。</li>
+      <li>賣方目標離散極大：均值 $405、多方 $600（Wedbush）、空方 $135（JPM）甚至 $25（GLJ）、$2,600（ARK,2029）—— 這本身說明 TSLA 是「二元期權」而非 DCF 標的。</li>
+    </ul>
+  </div>
+  <div class="card spcx">
+    <h3>SPCX</h3>
+    <p><span class="pill a">核心倉候選 · 分批 · 等供給衝擊</span></p>
+    <ul style="font-size:14px">
+      <li>質地優於 TSLA：<b>現金流護城河（Starlink）＋免費附送的高賠率選擇權</b>（軌道算力 / Starship / xAI）。</li>
+      <li>現價偏高、剛上市波動大，<b>建議等鎖倉到期的供給衝擊分批建立核心倉</b>，而非上市熱度中追高。</li>
+      <li>每季盯三個可驗證指標：<b>Starlink 淨增用戶 × ARPU、Starship 發射節奏、AI1 在軌驗證</b>。</li>
+      <li>關鍵單一風險＝Starship 執行節奏；火星承諾大概率 over-promise，留意預期落差帶來的回檔買點。</li>
+    </ul>
+  </div>
+</div>
+<div class="callout">
+  <b>合併傳聞的投資意涵（非對稱）：</b>若換股合併成真，等於用 SPCX 的現金流去背書 TSLA 的選擇權估值 —— <span class="up">對 TSLA 是估值支撐（利多）</span>，<span class="down">對 SPCX 股東則應要求折價補償</span>（用優質資產背書更投機資產）。目前<b>尚未正式宣布</b>，屬事件驅動投機，不可當基本面定價。
+</div>
+
+<!-- ===== 情境 ===== -->
+<h2><span class="n">7</span>三情境框架</h2>
+<table>
+  <thead><tr><th>情境</th><th>TSLA 驅動</th><th>SPCX 驅動</th></tr></thead>
+  <tbody>
+    <tr><td><span class="pill g">牛市</span></td><td>FSD v15 落地、robotaxi 多州放量、Optimus 量產路線確立</td><td>Starlink 量價齊升、Starship 入軌投送成功、AI1 驗證算力降本</td></tr>
+    <tr><td><span class="pill a">基準</span></td><td>本業低速、robotaxi 緩步擴張、敘事維持但不證實</td><td>Starlink 續增、發射穩定、太空算力仍為遠期選擇權</td></tr>
+    <tr><td><span class="pill r">熊市</span></td><td>v15 再跳票、份額續失、毛利壓縮、估值向本業回歸</td><td>Starship 卡關、火星承諾落空、鎖倉解禁殺估值</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 催化劑時間軸 ===== -->
+<h2><span class="n">8</span>2026 下半年催化劑時間軸</h2>
+<div class="timeline">
+  <div class="tl"><div class="date">2026 · 7 月–8 月</div>Starship Flight 13（V3 第二飛）— 驗證入軌與回收一致性</div>
+  <div class="tl"><div class="date">2026 · 7/22</div>TSLA Q2 財報 — 本業營收/毛利、robotaxi 進度口徑、capex 指引</div>
+  <div class="tl"><div class="date">2026 · 下半年（持續）</div>FSD v15 重寫釋出 — robotaxi 能否真正放量的關鍵閘門</div>
+  <div class="tl"><div class="date">2026 · 下半年</div>SPCX 鎖倉到期 — 供給衝擊，潛在核心倉建倉窗口</div>
+  <div class="tl"><div class="date">2026 · 下半年</div>Starship 在軌推進劑轉移測試 — Mars/算力路線的技術前提</div>
+  <div class="tl"><div class="date">2026 · 年底火星窗口</div>5 艘無人 Starship 飛火星目標 — 大概率 over-promise，留意預期落差</div>
+</div>
+
+<!-- ===== 風險 ===== -->
+<h2><span class="n">9</span>主要風險清單</h2>
+<ul>
+  <li><b>單人／單敘事集中風險：</b>兩者估值都高度綁定 Musk 與「AI＋太空＋自動化」同一套故事，且合併傳聞使其進一步相關 —— 分散化效果有限。</li>
+  <li><b>TSLA：</b>FSD v15 跳票、robotaxi 監管與安全事件、EV 份額續失（BYD 等）、180x 估值的均值回歸風險。</li>
+  <li><b>SPCX：</b>Starship 執行節奏不達標、軌道算力技術未驗證（散熱/輻射/成本）、鎖倉解禁供給、漲價導致 Starlink 流失。</li>
+  <li><b>事件風險：</b>合併條款若不利於某一方股東；IPO 後估值對利率與風險偏好敏感。</li>
+</ul>
+
+<div class="disclaimer">
+  <b>免責聲明：</b>本報告為公開資訊之整理、核實與分析框架，<b>不構成投資建議、要約或招攬</b>。所有估值區間與情境為分析推演，含估計成分（已於表註標示）。市場有風險，最終決策與風險承擔屬投資人本人。部分 2025 全年數字尚未完整公布，以已確認季度數據與年度交付為準。
+</div>
+
+<h2><span class="n">10</span>資料來源</h2>
+<p class="src">
+TSLA 股價/財報：<a href="https://capital.com/en-int/market-updates/tesla-stock-forecast-03-06-2026">Capital.com</a> ·
+<a href="https://www.sec.gov/Archives/edgar/data/0001318605/000162828025002993/exhibit991.htm">Tesla 8-K FY2024 (SEC)</a> ·
+<a href="https://www.electrive.com/2026/01/02/tesla-deliveries-decline-by-9-1-percent-in-2025/">electrive 2025 交付</a> ·
+<a href="https://www.fool.com/investing/2026/04/26/how-teslas-latest-update-changed-the-bull-and-bear/">Motley Fool 多空</a><br>
+Robotaxi：<a href="https://robotaxitracker.com/?provider=tesla&area=austin">Robotaxi Tracker</a> ·
+<a href="https://electrek.co/2026/06/03/tesla-robotaxi-expands-entire-austin-metro-only-20-vehicles/">Electrek（全 Austin）</a> ·
+<a href="https://electrek.co/2026/05/26/tesla-robotaxi-fleet-shrinking-not-growing/">Electrek（車隊縮減）</a> ·
+<a href="https://www.tesery.com/blogs/news/tesla-confirms-aggressive-robotaxi-expansion-to-seven-major-us-cities-in-first-half-of-2026">七城擴張計畫</a> ·
+<a href="https://www.cnbc.com/2026/05/28/tesla-robotaxi-fleet-texas-one-tenth-size-of-waymos-filings-reveal.html">CNBC（42 vs Waymo）</a><br>
+SpaceX/估值/IPO：<a href="https://sacra.com/c/spacex/">Sacra</a> ·
+<a href="https://www.cnbc.com/2026/06/12/spacex-ipo-spcx-live-updates.html">CNBC IPO</a> ·
+<a href="https://payloadspace.com/estimating-spacexs-2024-revenue/">Payload（2024 營收）</a> ·
+<a href="https://spacenews.com/starlink-outpaces-launches-spacexs-enters-new-era-of-profitability/">SpaceNews</a><br>
+Starlink 用戶：<a href="https://www.basenor.com/blogs/news/starlink-now-serves-10m-subscribers-worldwide-what-it-means">Basenor（10M）</a> ·
+<a href="https://orbital-intel.com/starlink-subscriber-growth/">Orbital-Intel 成長軌跡</a><br>
+SpaceXAI/Starship：<a href="https://www.tomshardware.com/tech-industry/spacex-details-its-ai1-compute-satellite">Tom's Hardware（AI1）</a> ·
+<a href="https://www.datacenterdynamics.com/en/news/spacex-files-for-million-satellite-orbital-ai-data-center-megaconstellation/">DCD（百萬衛星 FCC）</a> ·
+<a href="https://www.nasaspaceflight.com/2026/05/starship-flight-12-v3-follow/">NASASpaceflight（V3 首飛）</a>
+</p>
+
+<footer>製表：資深股票分析視角 · 2026/06/20 · 數據經多源交叉核實 · 僅供研究參考</footer>
+
+</div>
+
+<script>
+(function(){
+  if(typeof Chart==='undefined'){return;}
+  Chart.defaults.color='#9aa7b5';
+  Chart.defaults.font.family='-apple-system,Segoe UI,PingFang TC,Microsoft JhengHei,sans-serif';
+  var grid={color:'#2d3645'};
+  function mk(id,labels,data,color,fill){
+    var el=document.getElementById(id); if(!el)return;
+    new Chart(el,{type:'line',data:{labels:labels,datasets:[{data:data,
+      borderColor:color,backgroundColor:fill,borderWidth:2.5,
+      pointRadius:3,pointBackgroundColor:color,tension:0.25,fill:true}]},
+      options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:grid},y:{grid:grid,beginAtZero:true}}}});
+  }
+  mk('chartStarlink',['2023底','2024底','2025/12','2026/2'],[2.3,4.6,9,10],
+     '#4da3ff','rgba(77,163,255,.12)');
+  mk('chartSpacexRev',['2023','2024','2025','2026E'],[8.7,14.2,16,28.5],
+     '#3fb950','rgba(63,185,80,.12)');
+  mk('chartTslaDeliv',['2023','2024','2025'],[181,179,164],
+     '#f85149','rgba(248,81,73,.12)');
+  mk('chartRobotaxi',['25/6','25/9','25/11','25/12','26/4','26/6'],[10,15,29,35,25,21],
+     '#e3b341','rgba(227,179,65,.12)');
+})();
+</script>
+</body>
+</html>
