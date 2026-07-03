@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesla × SpaceX — Investment Dashboard (2026/07/02)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ===================== GLOBAL ===================== */
+*{box-sizing:border-box}
+body{margin:0;background:#0b0e14;color:#e6edf3;
+  font-family:-apple-system,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.65;font-size:15px}
+.appwrap{max-width:1720px;margin:0 auto;padding:22px 24px 80px}
+.apphead{text-align:center;padding:8px 0 4px}
+.apphead .ek{color:#f5b942;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:700}
+.apphead h1{font-size:24px;margin:8px 0 4px;font-weight:800;letter-spacing:.5px}
+.apphead .as{color:#9aa7b5;font-size:13px}
+.tabs{display:flex;gap:12px;justify-content:center;margin:22px 0 26px;flex-wrap:wrap}
+.tabbtn{flex:1 1 360px;max-width:520px;cursor:pointer;text-align:left;
+  background:#141923;border:1px solid #2d3645;border-radius:14px;padding:16px 20px;
+  transition:all .18s;color:#e6edf3;display:flex;align-items:center;gap:14px}
+.tabbtn:hover{border-color:#4da3ff;transform:translateY(-2px)}
+.tabbtn .ic{font-size:26px;line-height:1}
+.tabbtn .t1{font-size:16px;font-weight:800}
+.tabbtn .t2{font-size:12px;color:#9aa7b5;margin-top:2px}
+.tabbtn.active{border-color:#f5b942;background:linear-gradient(135deg,#1c2330,#141923);box-shadow:0 0 0 1px #f5b942 inset}
+.tabbtn.active .t1{color:#f5b942}
+.view{display:none;animation:fade .25s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* ===================== VIEW A — Investment Analysis ===================== */
+.viewA header.cover{border:1px solid #2d3645;border-radius:16px;padding:26px 26px;
+  background:linear-gradient(135deg,#161b22 0%,#1c2330 100%);margin-bottom:24px}
+.viewA header.cover h1{margin:0 0 6px;font-size:23px;letter-spacing:.5px}
+.viewA header.cover .sub{color:#9aa7b5;font-size:13.5px}
+.viewA .tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;
+  border:1px solid #2d3645;color:#9aa7b5;margin-right:6px;margin-top:10px}
+.viewA h2{font-size:20px;margin:38px 0 14px;padding-bottom:8px;border-bottom:2px solid #2d3645}
+.viewA h2 .n{color:#4da3ff;font-weight:700;margin-right:8px}
+.viewA h3{font-size:16px;margin:22px 0 8px;color:#4da3ff}
+.viewA p{margin:10px 0}
+.viewA .muted{color:#9aa7b5}
+.viewA .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.viewA .grid2{grid-template-columns:1fr}}
+.viewA .card{background:#161b22;border:1px solid #2d3645;border-radius:12px;padding:18px 20px}
+.viewA .card.tsla{border-top:3px solid #f85149}
+.viewA .card.spcx{border-top:3px solid #4da3ff}
+.viewA .verdict{font-size:18px;font-weight:700;margin:4px 0 8px}
+.viewA .v-over{color:#f85149}.viewA .v-fair{color:#e3b341}.viewA .v-good{color:#3fb950}
+.viewA table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.viewA th,.viewA td{padding:9px 11px;text-align:right;border-bottom:1px solid #2d3645}
+.viewA th:first-child,.viewA td:first-child{text-align:left}
+.viewA thead th{background:#1c2330;color:#9aa7b5;font-weight:600;border-bottom:2px solid #2d3645}
+.viewA tbody tr:hover{background:#1a2230}
+.viewA .up{color:#3fb950}.viewA .down{color:#f85149}.viewA .flat{color:#e3b341}
+.viewA .pill{font-size:12px;padding:2px 8px;border-radius:6px;font-weight:600}
+.viewA .pill.r{background:rgba(248,81,73,.15);color:#f85149}
+.viewA .pill.g{background:rgba(63,185,80,.15);color:#3fb950}
+.viewA .pill.a{background:rgba(227,179,65,.15);color:#e3b341}
+.viewA ul{margin:8px 0;padding-left:20px}.viewA li{margin:5px 0}
+.viewA .callout{background:#1c2330;border-left:3px solid #4da3ff;border-radius:8px;padding:12px 16px;margin:14px 0}
+.viewA .callout.warn{border-left-color:#e3b341}
+.viewA .callout.risk{border-left-color:#f85149}
+.viewA .callout.good{border-left-color:#3fb950}
+.viewA .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #2d3645;font-size:14px}
+.viewA .kv:last-child{border-bottom:none}
+.viewA .kv span:first-child{color:#9aa7b5}
+.viewA .timeline{position:relative;margin:14px 0;padding-left:22px}
+.viewA .timeline::before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:#2d3645}
+.viewA .tl{position:relative;margin:12px 0}
+.viewA .tl::before{content:"";position:absolute;left:-22px;top:5px;width:10px;height:10px;border-radius:50%;background:#4da3ff;border:2px solid #0b0e14}
+.viewA .tl .date{font-weight:700;color:#4da3ff;font-size:13px}
+.viewA .disclaimer{font-size:12px;color:#9aa7b5;border:1px dashed #2d3645;border-radius:10px;padding:14px 16px;margin-top:30px}
+.viewA .src{font-size:12px;color:#9aa7b5}
+.viewA .src a{color:#4da3ff;text-decoration:none}
+.viewA .bignum{font-size:22px;font-weight:700}
+.viewA footer{margin-top:40px;text-align:center;color:#9aa7b5;font-size:12px}
+.viewA .new{display:inline-block;font-size:10px;font-weight:800;background:#f5b942;color:#0b0e14;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle;letter-spacing:.5px}
+
+/* ===================== VIEW B — Quarterly Review ===================== */
+.viewB .kicker{color:#f5b942;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:700}
+.viewB h2{font-size:22px;margin:44px 0 6px;padding-top:12px;font-weight:800;display:flex;align-items:center;gap:10px}
+.viewB h3{font-size:17px;margin:32px 0 12px;font-weight:700;border-left:3px solid #f5b942;padding-left:10px}
+.viewB h4{margin:0}
+.viewB .tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;vertical-align:middle}
+.viewB .tag.t{background:rgba(227,36,43,.15);color:#ff6b6b;border:1px solid rgba(227,36,43,.35)}
+.viewB .tag.s{background:rgba(91,141,239,.15);color:#5b8def;border:1px solid rgba(91,141,239,.35)}
+.viewB p{margin:10px 0}
+.viewB .note{color:#94a3b8;font-size:13px}
+.viewB .grid{display:grid;gap:16px}
+.viewB .g2{grid-template-columns:1fr 1fr}
+.viewB .g3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:820px){.viewB .g2,.viewB .g3{grid-template-columns:1fr}}
+.viewB .card{background:#141923;border:1px solid #283142;border-radius:12px;padding:18px}
+.viewB .card h4{color:#94a3b8;font-size:14px;font-weight:600;margin-bottom:8px}
+.viewB .chartbox{background:#141923;border:1px solid #283142;border-radius:12px;padding:16px 16px 10px;margin:14px 0}
+.viewB .chartbox h4{margin:0 0 12px;font-size:14px;color:#94a3b8;font-weight:600}
+.viewB .chart{position:relative;height:300px}
+.viewB .chart.sm{height:240px}
+.viewB table{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0}
+.viewB .scroll{overflow-x:auto;border:1px solid #283142;border-radius:12px}
+.viewB th,.viewB td{padding:9px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid #283142}
+.viewB th:first-child,.viewB td:first-child{text-align:left;position:sticky;left:0;background:#1b2130}
+.viewB thead th{background:#1b2130;color:#94a3b8;font-weight:600;font-size:12px}
+.viewB tbody tr:hover td{background:rgba(255,255,255,.02)}
+.viewB .pos{color:#22c55e}.viewB .neg{color:#ef4444}
+.viewB .metric-row td:first-child{color:#94a3b8;font-weight:600}
+.viewB .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+@media(max-width:820px){.viewB .kpis{grid-template-columns:repeat(2,1fr)}}
+.viewB .kpi{background:#1b2130;border:1px solid #283142;border-radius:10px;padding:14px}
+.viewB .kpi .lbl{font-size:11.5px;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+.viewB .kpi .val{font-size:22px;font-weight:800;margin-top:4px}
+.viewB .kpi .chg{font-size:12px;margin-top:2px}
+.viewB .take{background:linear-gradient(180deg,#1b2130,#141923);border:1px solid #283142;border-left:3px solid #f5b942;border-radius:10px;padding:14px 16px;margin:16px 0;font-size:14px}
+.viewB .take b{color:#f5b942}
+.viewB .seq{background:#10151e;border:1px solid #283142;border-radius:10px;padding:6px 16px;margin:14px 0}
+.viewB .seq .q{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #1f2735;font-size:13.5px}
+.viewB .seq .q:last-child{border-bottom:none}
+.viewB .seq .ql{flex:0 0 70px;font-weight:800;color:#5b8def}
+.viewB .seq .qt{color:#cbd5e1}
+.viewB .callout{background:rgba(245,185,66,.08);border:1px solid rgba(245,185,66,.3);border-radius:10px;padding:13px 15px;font-size:13.5px;color:#f3e3c0;margin:16px 0}
+.viewB .pos-c{color:#22c55e}.viewB .neg-c{color:#ef4444}.viewB .flat{color:#e3b341}
+.viewB footer{margin-top:50px;border-top:1px solid #283142;padding-top:20px;color:#64748b;font-size:12px}
+.viewB a{color:#5b8def}
+/* ===== shared additions ===== */
+#toTop{position:fixed;right:22px;bottom:24px;z-index:50;display:none;cursor:pointer;
+  background:#f5b942;color:#0b0e14;border:none;border-radius:30px;padding:11px 18px;
+  font-size:14px;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.45);transition:transform .15s}
+#toTop:hover{transform:translateY(-3px)}
+.viewA .fc{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:720px){.viewA .fc{grid-template-columns:1fr}}
+.viewA .fcard{background:#161b22;border:1px solid #2d3645;border-radius:12px;padding:16px}
+.viewA .fcard .ch{height:230px;position:relative;margin-bottom:8px}
+.viewA .scn{font-size:13px;width:100%;border-collapse:collapse}
+.viewA .scn td,.viewA .scn th{padding:7px 9px;border-bottom:1px solid #2d3645;text-align:left}
+.viewA .scn .px{text-align:right;font-weight:700;white-space:nowrap}
+.viewA .bull{color:#3fb950}.viewA .bearr{color:#f85149}.viewA .baseR{color:#e3b341}
+.viewA .elog{position:relative;margin:14px 0;padding-left:20px}
+.viewA .elog::before{content:"";position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:#2d3645}
+.viewA .ev{position:relative;margin:11px 0;padding-left:6px}
+.viewA .ev::before{content:"";position:absolute;left:-20px;top:6px;width:9px;height:9px;border-radius:50%;background:#4da3ff;border:2px solid #0b0e14}
+.viewA .ev.big::before{background:#f5b942;width:12px;height:12px;left:-21px}
+.viewA .ev .ed{font-weight:700;color:#9aa7b5;font-size:12px;margin-right:8px}
+.viewA .ev .et{font-size:13.5px}
+.viewA .pin{background:#1c2330;border:1px solid #e3b341;border-radius:10px;padding:12px 14px;margin:12px 0}
+.viewA .pin .ph{color:#e3b341;font-weight:800;font-size:13px;margin-bottom:6px}
+.viewA .pin .pi{font-size:13px;margin:4px 0}
+.viewA .pin .pi b{color:#e6edf3}
+
+/* ===================== VIEW C — Growth Tracker ===================== */
+.viewC .kicker{color:#f5b942;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:700}
+.viewC h2{font-size:22px;margin:40px 0 6px;padding-top:12px;font-weight:800;display:flex;align-items:center;gap:10px}
+.viewC h3{font-size:16px;margin:8px 0;color:#94a3b8;font-weight:600}
+.viewC p{margin:10px 0}
+.viewC .note{color:#94a3b8;font-size:13px}
+.viewC a{color:#5b8def}
+.viewC .callout{background:rgba(245,185,66,.08);border:1px solid rgba(245,185,66,.3);border-radius:10px;padding:13px 15px;font-size:13.5px;color:#f3e3c0;margin:16px 0}
+.viewC .grid{display:grid;gap:18px;grid-template-columns:1fr 1fr}
+@media(max-width:860px){.viewC .grid{grid-template-columns:1fr}}
+.viewC .mcard{background:#141923;border:1px solid #283142;border-radius:14px;padding:16px 16px 12px;display:flex;flex-direction:column}
+.viewC .mcard .mh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
+.viewC .mcard .mt{font-size:15px;font-weight:800}
+.viewC .mcard .mu{font-size:11.5px;color:#64748b;margin-top:1px}
+.viewC .mcard .mnote{font-size:11.5px;color:#64748b;margin:2px 0 10px;line-height:1.5}
+.viewC .latest{text-align:right;white-space:nowrap}
+.viewC .latest .lv{font-size:20px;font-weight:800;line-height:1.1}
+.viewC .latest .ll{font-size:10.5px;color:#64748b}
+.viewC .sumwrap{background:linear-gradient(135deg,#161b22,#1c2330);border:1px solid #2d3645;border-radius:14px;padding:18px 20px;margin:14px 0 18px}
+.viewC .sumwrap h3{margin:0 0 4px;font-size:18px;font-weight:800}
+.viewC .skpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+@media(max-width:720px){.viewC .skpi{grid-template-columns:repeat(2,1fr)}}
+.viewC .skpi .k{background:#10151e;border:1px solid #283142;border-radius:10px;padding:11px 12px}
+.viewC .skpi .kl{font-size:11px;color:#64748b}
+.viewC .skpi .kv{font-size:21px;font-weight:800;margin-top:2px}
+.viewC .skpi .kc{font-size:11px;margin-top:2px;color:#9aa7b5}
+.viewC .eb{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+@media(max-width:720px){.viewC .eb{grid-template-columns:1fr}}
+.viewC .eb .col{border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.85}
+.viewC .eb .earn{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3)}
+.viewC .eb .burn{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3)}
+.viewC .eb h4{margin:0 0 4px;font-size:14px}
+.viewC .pos2{color:#22c55e;font-weight:700}.viewC .neg2{color:#ef4444;font-weight:700}
+.viewC .gtog{display:inline-flex;gap:0;border:1px solid #2d3645;border-radius:7px;overflow:hidden;margin-top:4px}
+.viewC .gtog button{background:#161b22;color:#94a3b8;border:none;border-right:1px solid #2d3645;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.viewC .gtog button:last-child{border-right:none}
+.viewC .gtog button.on{background:#f5b942;color:#0b0e14}
+.viewC .gtog button:hover:not(.on){background:#1c2330}
+.viewC .growth{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 10px}
+.viewC .gbadge{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;background:#1b2130;border:1px solid #283142;color:#cbd5e1}
+.viewC .gbadge b{font-weight:800}
+.viewC .gbadge.up{color:#22c55e;border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+.viewC .gbadge.down{color:#ef4444;border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08)}
+.viewC .mchart{position:relative;height:200px;margin-top:auto}
+.viewC details.rec{margin-top:10px;border-top:1px solid #283142;padding-top:8px}
+.viewC details.rec summary{cursor:pointer;font-size:12px;color:#5b8def;list-style:none;user-select:none}
+.viewC details.rec summary::-webkit-details-marker{display:none}
+.viewC details.rec summary::before{content:"▸ ";color:#5b8def}
+.viewC details.rec[open] summary::before{content:"▾ "}
+.viewC .rectbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.viewC .rectbl td{padding:5px 7px;border-bottom:1px solid #1f2735;text-align:right}
+.viewC .rectbl td:first-child{text-align:left;color:#94a3b8}
+.viewC footer{margin-top:50px;border-top:1px solid #283142;padding-top:20px;color:#64748b;font-size:12px}
+
+/* ===== 頂部：下一季預期 vs 實際 面板 ===== */
+.viewB .expect{background:linear-gradient(135deg,#1a2130,#141923);border:1px solid #f5b942;border-radius:14px;padding:16px 18px 12px;margin:16px 0 6px}
+.viewB .expect .ehead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.viewB .expect .ehead .t{font-size:16.5px;font-weight:800;color:#f5b942}
+.viewB .expect .ehead .d{font-size:12px;color:#94a3b8}
+.viewB .expect th.act,.viewB .expect td.act{background:rgba(245,185,66,.07);border-left:1px solid rgba(245,185,66,.35);font-weight:700}
+.viewB .expect .wait{color:#64748b;font-weight:600}
+.viewB .expect .hit{color:#22c55e}.viewB .expect .miss{color:#ef4444}
+.viewB .expect p.note{margin:8px 0 0}
+
+/* ===== 業務樹狀拆解 ===== */
+.viewB tr.biz td{background:#1e2635;font-weight:800;color:#e6edf3;border-top:2px solid #34405a;font-size:13.5px}
+.viewB tr.biz td:first-child{background:#1e2635;border-left:3px solid var(--bc,#5b8def)}
+.viewB td.sub{padding-left:28px!important;color:#cbd5e1}
+.viewB td.sub::before{content:"└ ";color:#475569}
+/* 大螢幕：預期面板與樹狀表允許換行、不出橫向捲軸 */
+.viewB .expect th,.viewB .expect td,.viewB table.wide th,.viewB table.wide td{white-space:normal}
+.viewB .expect .scroll,.viewB .scroll:has(table.wide){overflow-x:visible;border:1px solid #283142;border-radius:12px}
+
+/* ===== 成績單卡片（預期 vs 實際，資料驅動） ===== */
+.viewB .egrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:4px 0 2px}
+.viewB .ecard{background:#141923;border:1px solid #283142;border-radius:12px;padding:13px 15px}
+.viewB .ecard.ok{border-color:rgba(34,197,94,.6);background:linear-gradient(180deg,rgba(34,197,94,.10),#141923)}
+.viewB .ecard.bad{border-color:rgba(239,68,68,.6);background:linear-gradient(180deg,rgba(239,68,68,.10),#141923)}
+.viewB .ecard.neu{border-color:rgba(91,141,239,.5)}
+.viewB .ecard.wait{opacity:.8}
+.viewB .ecard .en{font-size:12.5px;color:#94a3b8;display:flex;justify-content:space-between;gap:6px}
+.viewB .ecard .edate{font-size:11px;color:#475569;white-space:nowrap}
+.viewB .ecard .ev{font-size:25px;font-weight:800;margin:5px 0 1px;line-height:1.2}
+.viewB .ecard .ev small{font-size:13px;color:#94a3b8;font-weight:600}
+.viewB .ecard .ecmp{font-size:11.5px;color:#64748b;min-height:16px}
+.viewB .ecard .ebar{position:relative;height:9px;background:#1f2735;border-radius:5px;margin:10px 0 8px}
+.viewB .ecard .ebar .fill{height:100%;border-radius:5px}
+.viewB .ecard .ebar .mark{position:absolute;top:-3px;bottom:-3px;width:2.5px;background:#e6edf3;border-radius:2px;box-shadow:0 0 4px rgba(0,0,0,.6)}
+.viewB .ecard .ebadge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px}
+.viewB .ecard .ebadge.ok{background:rgba(34,197,94,.16);color:#22c55e}
+.viewB .ecard .ebadge.bad{background:rgba(239,68,68,.16);color:#ef4444}
+.viewB .ecard .ebadge.wait{background:#1b2130;color:#64748b}
+.viewB .ecard .ebadge.neu{background:rgba(91,141,239,.16);color:#5b8def}
+.viewB .ecard .eprev{font-size:11.5px;color:#94a3b8;margin:1px 0 8px}
+.viewB .ecard .eprev b{font-weight:800}
+.viewB .ecard .eprev b.up{color:#22c55e}
+.viewB .ecard .eprev b.down{color:#ef4444}
+.viewB .ecard.link{cursor:pointer;transition:border-color .15s,transform .15s}
+.viewB .ecard.link:hover{border-color:#4da3ff;transform:translateY(-2px)}
+.viewB .ecard .elink{float:right;font-size:11px;color:#5b8def;margin-top:5px}
+.flashbx{animation:flashbx 1.8s ease}
+@keyframes flashbx{0%,55%{box-shadow:0 0 0 2.5px #f5b942}100%{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="appwrap">
+
+<div class="apphead">
+  <div class="ek">Tesla × SpaceX · Musk-System Equity Dashboard</div>
+  <h1>特斯拉 × SpaceX 投資儀表板</h1>
+  <div class="as">資料截至 2026-07-02 ｜ 點按下方按鈕切換頁面 ｜ <b style="color:#f85149">非機構報告·僅思考框架</b></div>
+</div>
+
+<div class="tabs">
+  <div class="tabbtn active" id="btnC" onclick="showView('C')">
+    <div class="ic">📉</div>
+    <div><div class="t1">增速追蹤<span class="new">LIVE</span></div>
+    <div class="t2">發射/用戶/算力/支出/FSD/Robotaxi/Optimus 全歷史折線 · 資料由 Claude 上網核實更新</div></div>
+  </div>
+  <div class="tabbtn" id="btnT" onclick="showView('T')">
+    <div class="ic">🚗</div>
+    <div><div class="t1">Tesla 逐季深度</div>
+    <div class="t2">頂部 Q2'26 預期vs實際 · 8 季財報折線 · 超預期追蹤 · 新業務細分</div></div>
+  </div>
+  <div class="tabbtn" id="btnS" onclick="showView('S')">
+    <div class="ic">🚀</div>
+    <div><div class="t1">SpaceX 逐季深度</div>
+    <div class="t2">頂部 Q2'26 預期vs實際 · 業務樹狀拆解 · 估算vs S-1 · xAI/估值</div></div>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- =================== VIEW T (Tesla) — placeholder ================= -->
+<!-- =================================================================== -->
+
+<!-- =================================================================== -->
+<!-- ============================ VIEW B ============================== -->
+<!-- =================================================================== -->
+<div class="view viewB viewT" id="viewT">
+<div class="kicker">Tesla · Quarterly Deep Dive · 逐季深度</div>
+<p style="font-size:23px;font-weight:800;margin:8px 0 4px">🚗 特斯拉 Tesla（TSLA）逐季深度</p>
+<div class="note">過去 8 個季度（Q2 2024 → Q1 2026）官方 8-K 審計數據 ｜ 市場預測 vs 實際 vs 超預期 ｜ Q2 2026 展望</div>
+
+<!-- ============ 頂部：下一季預期 vs 實際（發佈後把「實際/差異」欄填上即可一目了然） ============ -->
+<div class="expect">
+  <div class="ehead"><div class="t">⏭️ Q2 2026 預期 vs 實際</div><div class="d" id="esumT"></div></div>
+  <div class="egrid" id="egridT"></div>
+  <p class="note">灰卡＝待公佈（大字為<b>預期值</b>）；公佈後自動變<span class="hit">綠＝超預期</span>／<span class="miss">紅＝遜預期</span>，大字變實際值，色條＝實際、白線＝預期位置。共識：交付 40.6 萬台（17 家彙整）、儲能 13.8 GWh、營收 245.2 億、EPS US$0.44；淨利＝EPS×35.2 億股推算。質化看點：Cybercab 爬坡、robotaxi 擴張、capex 指引。</p>
+</div>
+
+<div class="callout">
+  <b>方法論：</b>Tesla 為上市公司，採官方 8-K 季報（SEC EDGAR）逐季數據，8 季完整可比，並可逐季與華爾街分析師<b>共識預測</b>對照。下方「預測 vs 實際」之共識取自 LSEG／Zacks／Bloomberg 等彙整；<span class="pos-c">超預期</span>＝實際優於共識、<span class="neg-c">遜預期</span>＝實際低於共識。淨利採<b>非 GAAP（調整後）</b>，其共識由「調整後 EPS 共識 × 攤薄股數（約 35.2 億股）」推算，標註為估算。
+</div>
+
+<!-- ============ TESLA KPI ============ -->
+<h2><span class="tag t">TSLA · NASDAQ</span> 一、特斯拉 Tesla</h2>
+<p class="note">三大分部：① 汽車 Automotive ② 能源 Energy ③ 服務 Services。金額單位一律為<b>億美元</b>（皆 GAAP 申報值）。<span class="muted">換算：1 億美元 ＝ 100 百萬美元；美股原文 $1B（10 億美元）＝ 10 億。</span></p>
+<div class="kpis">
+  <div class="kpi"><div class="lbl">Q1 2026 總營收</div><div class="val">223.9 億美元</div><div class="chg pos">+16% YoY · −10% QoQ</div></div>
+  <div class="kpi"><div class="lbl">毛利率（2 年高）</div><div class="val">21.1%</div><div class="chg pos">連 4 季修復</div></div>
+  <div class="kpi"><div class="lbl">Q1 2026 交付</div><div class="val">358,023</div><div class="chg pos">+6% YoY · 產＞銷</div></div>
+  <div class="kpi"><div class="lbl">FSD 訂閱（用戶）</div><div class="val">1.28M</div><div class="chg pos">+51% YoY</div></div>
+</div>
+
+<!-- ============ TESLA 預測 vs 實際 ============ -->
+<h3>1.0 市場預測 vs 實際 vs 超預期（營收＋淨利，含同比）<span style="font-size:11px;background:#f5b942;color:#0b0e14;border-radius:4px;padding:1px 6px;font-weight:800">NEW</span></h3>
+<p class="note">逐季把華爾街<b>共識預測</b>與<b>實際申報</b>並排，看 Tesla 是「超預期」還是「遜預期」，並列同比（YoY）。重點規律：近 5 季幾乎<b>「營收幾乎季季略低於預期、調整後獲利卻常超預期」</b>——靠成本／一次性項目擠出獲利，而非營收動能。</p>
+<div class="chartbox"><h4>季度營收：市場預測 vs 實際（億美元）— 含 Q2'26 共識預測</h4><div class="chart"><canvas id="tslaBeatRev"></canvas></div></div>
+<div class="scroll"><table>
+  <thead><tr><th>季度</th><th>營收預測<br>(億美元)</th><th>營收實際<br>(億美元)</th><th>營收同比</th><th>結果</th><th>EPS預測<br>(美元/股)</th><th>EPS實際</th><th>淨利實際*<br>(億美元)</th><th>淨利同比</th><th>結果</th></tr></thead>
+  <tbody>
+    <tr><td class="metric-row">Q2 24</td><td>251.0</td><td>255.0</td><td class="pos-c">+2%</td><td><span class="pos-c">營收超</span></td><td>US$0.62</td><td>US$0.52</td><td>18.1</td><td>—</td><td><span class="neg-c">淨利遜</span></td></tr>
+    <tr><td class="metric-row">Q3 24</td><td>253.7</td><td>251.8</td><td class="pos-c">+8%</td><td><span class="neg-c">營收遜</span></td><td>US$0.58</td><td>US$0.72</td><td>25.1</td><td>—</td><td><span class="pos-c">淨利超</span></td></tr>
+    <tr><td class="metric-row">Q4 24</td><td>275.0</td><td>257.1</td><td class="pos-c">+2%</td><td><span class="neg-c">營收遜</span></td><td>US$0.75</td><td>US$0.73</td><td>25.7</td><td>—</td><td><span class="neg-c">淨利遜</span></td></tr>
+    <tr><td class="metric-row">Q1 25</td><td>214.0</td><td>193.4</td><td class="neg-c">−9%</td><td><span class="neg-c">營收遜</span></td><td>US$0.42</td><td>US$0.27</td><td>9.3</td><td>—</td><td><span class="neg-c">淨利遜</span></td></tr>
+    <tr><td class="metric-row">Q2 25</td><td>227.4</td><td>225.0</td><td class="neg-c">−12%</td><td><span class="neg-c">營收遜</span></td><td>US$0.43</td><td>US$0.40</td><td>13.9</td><td class="neg-c">−23%</td><td><span class="neg-c">淨利遜</span></td></tr>
+    <tr><td class="metric-row">Q3 25</td><td>264.0</td><td>281.0</td><td class="pos-c">+12%</td><td><span class="pos-c">營收超</span></td><td>US$0.54</td><td>US$0.50</td><td>17.7</td><td class="neg-c">−29%</td><td><span class="neg-c">淨利遜</span></td></tr>
+    <tr><td class="metric-row">Q4 25</td><td>251.4</td><td>249.0</td><td class="neg-c">−3%</td><td><span class="neg-c">營收遜</span></td><td>US$0.45</td><td>US$0.50</td><td>17.6</td><td class="neg-c">−31%</td><td><span class="pos-c">淨利超</span></td></tr>
+    <tr><td class="metric-row">Q1 26</td><td>226.4</td><td>223.9</td><td class="pos-c">+16%</td><td><span class="neg-c">營收遜</span></td><td>US$0.37</td><td>US$0.41</td><td>14.5</td><td class="pos-c">+56%</td><td><span class="pos-c">淨利超</span></td></tr>
+    <tr style="background:rgba(245,185,66,.08)"><td class="metric-row"><b>Q2 26E</b></td><td><b>245.2</b></td><td class="flat">待公佈</td><td class="pos-c">≈+9%</td><td><span class="flat">7/22 公佈</span></td><td><b>US$0.44</b></td><td class="flat">待公佈</td><td class="flat">≈15.5</td><td class="flat">≈+11%</td><td><span class="flat">7/22 公佈</span></td></tr>
+  </tbody>
+</table></div>
+<p class="note">＊營收／淨利單位為<b>億美元</b>；EPS 為每股美元。淨利採非 GAAP（調整後）；Q2'26 淨利為「EPS 共識 US$0.44 × 約 35.2 億股」推算之估值。2024 各季淨利同比因前期基準不在本表故略。</p>
+<div class="callout warn">
+  <b>Q2 2026 展望（交付 7/2 公佈、財報 7/22）：</b>交付共識 <b>40.6 萬台（+5.7% YoY、+12% QoQ）</b>、儲能共識 <b>13.8 GWh（+36% QoQ）</b>；財報共識<b>營收約 245 億美元（同比約 +9%）、調整後 EPS 約 US$0.42–0.46</b>，較 Q1 環比回升（季節旺季＋Cybercab 初貢獻）。市場關注點：(1) 交付能否守住 40 萬（美國本土在跌、靠歐洲/國際撐）；(2) 毛利率能否守住 20%+ 而非靠一次性項目；(3) Cybercab 爬坡與 robotaxi 口徑；(4) capex 指引。<b>「營收略遜、獲利略超」的近期模式若延續，股價反應將取決於 robotaxi/Cybercab 的前瞻指引而非當季數字。</b>
+</div>
+<div class="take">
+  <b>連續解讀．</b>把 8 季 beat/miss 連起來看出三件事：① <b>營收動能轉弱</b>——8 季有 6 季營收遜於預期，且同比在 2025 連 3 季為負（Q1'25 −9%、Q2'25 −12%、Q4'25 −3%），直到 Q1'26 才靠低基期翻正 +16%。② <b>獲利「人造」超預期</b>——Q4'25、Q1'26 調整後 EPS 超預期，但淨利同比仍分別 −31%／+56%（後者純因 Q1'25 谷底基期），<u>絕對獲利水準遠低於 2024</u>。③ <b>市場已從「看當季」轉「看選擇權」</b>：Q1'26 EPS 超預期但股價反應平淡，真正驅動股價的是 FSD v15／Cybercab／Optimus 的兌現節奏。
+</div>
+
+<h3>1.1 營收：分部逐季折線（億美元）</h3>
+<div class="chartbox">
+  <h4>三大分部季度營收折線 — 汽車降速、能源震盪、服務單調上行</h4>
+  <div class="chart"><canvas id="tslaRev"></canvas></div>
+</div>
+<div class="scroll"><table id="tslaRevTable">
+  <thead><tr><th>分部營收（億美元）</th><th>Q2 24</th><th>Q3 24</th><th>Q4 24</th><th>Q1 25</th><th>Q2 25</th><th>Q3 25</th><th>Q4 25</th><th>Q1 26</th></tr></thead>
+  <tbody></tbody>
+</table></div>
+<div class="seq">
+  <div class="q"><div class="ql">Q2 24</div><div class="qt">汽車旺季回升 199 億、能源跳增 30 億，總營收 255 億、毛利率 18.0%。</div></div>
+  <div class="q"><div class="ql">Q3 24</div><div class="qt">汽車續穩 200 億、能源回落 24 億，<span class="pos-c">毛利率衝 19.8%（全期次高）</span>、營業利潤率達 10.8% 高峰。</div></div>
+  <div class="q"><div class="ql">Q4 24</div><div class="qt">交付創高 49.6 萬，但 ASP 下滑、毛利率回落 16.3%；能源 31 億、含一次性加密資產收益。</div></div>
+  <div class="q"><div class="ql">Q1 25</div><div class="qt"><span class="neg-c">谷底</span>：Model Y 改款致產線停擺，汽車暴跌至 140 億（QoQ −29%），總營收 193 億為全期最低。</div></div>
+  <div class="q"><div class="ql">Q2 25</div><div class="qt">汽車回升 167 億、服務首破 30 億，總營收 225 億、毛利率回 17.2%。</div></div>
+  <div class="q"><div class="ql">Q3 25</div><div class="qt"><span class="pos-c">全面爆發</span>：交付 49.7 萬史高、汽車 212 億、總營收 281 億為 8 季最高。</div></div>
+  <div class="q"><div class="ql">Q4 25</div><div class="qt">季節回落、汽車 177 億，惟<span class="pos-c">能源創高 38.4 億</span>、毛利率升至 20.1%。</div></div>
+  <div class="q"><div class="ql">Q1 26</div><div class="qt">汽車再降 162 億、能源驟降 24.1 億，但<span class="pos-c">服務創高 37.5 億（+42% YoY）</span>、毛利率 21.1% 創 2 年新高。</div></div>
+</div>
+<div class="take">
+  <b>連續解讀．</b>把 8 季連起來看：汽車是一條「鋸齒下行」線（每年 Q1 因改款/季節砍半、Q3 衝高），方向偏弱；能源是「高波動」線（6.9→14.2→8.8 GWh 帶動營收大起大落）；唯有<b>服務</b>是一條近乎 45 度的單調上升線（26.1 億→37.5 億美元），隨 FSD 訂閱與超充網路複利。投資人應把 TSLA 當「三條成長速率不同的曲線」而非單一車廠。
+</div>
+
+<h3>1.2 獲利能力：毛利率 / 營業利潤率逐季（%）</h3>
+<div class="chartbox"><h4>整體毛利率與營業利潤率 — V 型修復（谷底 Q1'25）</h4><div class="chart"><canvas id="tslaMargin"></canvas></div></div>
+<div class="chartbox"><h4>能源分部毛利率 — 結構性走高至 39.5%</h4><div class="chart sm"><canvas id="tslaEnergyGM"></canvas></div></div>
+<div class="take">
+  <b>連續解讀．</b>整體毛利率走出漂亮的 V：18.0%（Q2'24）→ 19.8% → 16.3% → <b>16.3%（Q1'25 谷底）</b> → 17.2% → 18.0% → 20.1% → <b>21.1%（Q1'26）</b>。但<b>營業利潤率反向</b>：Q3'24 曾達 10.8%，到 Q1'26 僅 4.2%——因 AI/Robotaxi/Optimus 的 R&D 與 CEO 股酬墊高費用。結論：毛利在修復，公司卻把錢大量投進未來業務，壓抑當期營業利潤。
+</div>
+
+<h3>1.3 利潤與每股盈餘（億美元／每股美元）</h3>
+<div class="chartbox"><h4>GAAP 淨利、非 GAAP 淨利、調整後 EBITDA</h4><div class="chart"><canvas id="tslaProfit"></canvas></div></div>
+<div class="scroll"><table id="tslaProfitTable">
+  <thead><tr><th>獲利指標</th><th>Q2 24</th><th>Q3 24</th><th>Q4 24</th><th>Q1 25</th><th>Q2 25</th><th>Q3 25</th><th>Q4 25</th><th>Q1 26</th></tr></thead>
+  <tbody></tbody>
+</table></div>
+<div class="take">
+  <b>連續解讀．</b>GAAP 淨利從 2024 每季 15–23 億，逐季滑落到 2025–26 的 4–14 億；Q1'26 僅 4.8 億、稀釋 EPS US$0.13。調整後 EBITDA 同步從 ~49 億高峰降到 37 億（皆美元）。賣得多但每台賺得少＋費用爆增——這也是為何 TSLA 當前盈利撐不起市值，市場買的是 Robotaxi/Cybercab/Optimus 的<u>選擇權價值</u>。
+</div>
+
+<h3>1.4 營運指標：產銷、儲能、超充、FSD「用戶」</h3>
+<div class="grid g2">
+  <div class="chartbox"><h4>季度交付 vs 產量 — Q1'25/Q1'26 皆「產＞銷」累庫</h4><div class="chart sm"><canvas id="tslaDeliv"></canvas></div></div>
+  <div class="chartbox"><h4>儲能部署 GWh — Q4'25 創高 14.2、Q1'26 回落 8.8</h4><div class="chart sm"><canvas id="tslaStorage"></canvas></div></div>
+</div>
+<div class="grid g2">
+  <div class="chartbox"><h4>FSD 主動訂閱（百萬）— 新揭露的「用戶」金礦</h4><div class="chart sm"><canvas id="tslaFSD"></canvas></div></div>
+  <div class="chartbox"><h4>超級充電站數（座）— 連 8 季穩定擴張</h4><div class="chart sm"><canvas id="tslaSC"></canvas></div></div>
+</div>
+<div class="scroll"><table id="tslaOpsTable">
+  <thead><tr><th>營運指標</th><th>Q2 24</th><th>Q3 24</th><th>Q4 24</th><th>Q1 25</th><th>Q2 25</th><th>Q3 25</th><th>Q4 25</th><th>Q1 26</th></tr></thead>
+  <tbody></tbody>
+</table></div>
+<div class="take">
+  <b>連續解讀．</b>「用戶」對 TSLA 最關鍵的是 <b>FSD 主動訂閱</b>（2025 起揭露）：0.85→0.95→1.04→1.10→1.28M，逐季皆增，是把車隊變「軟體訂閱用戶」的早期證據。<b>交付</b> 連 2 年同期下滑，Q1'25/Q1'26 皆「產＞銷」累庫（Q1'26 庫存天數衝 27 天）。<b>儲能</b> 是高 beta 變數，單季可左右整體毛利。<b>超充</b> 是少數穩定複利的資產。
+</div>
+
+<h3>1.5 新業務細分：Optimus / Cybercab / Robotaxi <span style="font-size:11px;background:#f5b942;color:#0b0e14;border-radius:4px;padding:1px 6px;font-weight:800">NEW</span></h3>
+<p class="note">以下為尚未產生損益、但決定 TSLA 估值的「選擇權」業務，逐項列出最新進度（2026/6 核實）。</p>
+<div class="scroll"><table>
+  <thead><tr><th>業務</th><th>定位</th><th>最新進度</th><th>量產/放量時點</th></tr></thead>
+  <tbody>
+    <tr><td class="metric-row">Cybercab</td><td style="text-align:left">無方向盤 robotaxi 專用車、unboxed 製程</td><td style="text-align:left"><b>6/30 首台量產車於 Austin 公開道路工程測試</b>（無方向盤實車入市區車流）；市中心 34 台、達拉斯另有 70 台待命，<b>尚未載客</b></td><td>2026 H2 爬坡</td></tr>
+    <tr><td class="metric-row">Optimus 人形機器人</td><td style="text-align:left">把 AI 裝進「手腳」；Musk 視為長期最大價值</td><td style="text-align:left">Fremont <b>V3 產線 7 月底–8 月投產</b>（Model S/X 5 月停產騰線）；初期產出「相當慢」，2026 估低數千台；Giga Texas 專廠 2027</td><td>2026 夏試產 / 2027 放量</td></tr>
+    <tr><td class="metric-row">Robotaxi 服務</td><td style="text-align:left">FSD 無監督載客</td><td style="text-align:left">Austin 全都會無監督（6/3）、Dallas/Houston 無監督上線；惟車隊僅約 <b>39 台</b>（Austin 28＋Dallas 5＋Houston 6）</td><td>等 FSD v15</td></tr>
+    <tr><td class="metric-row">Tesla Semi / Megapack 3</td><td style="text-align:left">電動卡車 / 新一代儲能</td><td style="text-align:left">休士頓 Megafactory 興建；Semi 產線就緒</td><td>2026 量產</td></tr>
+    <tr><td class="metric-row">AI5 晶片</td><td style="text-align:left">邊緣推理（降 Nvidia 依賴）</td><td style="text-align:left">已完成最終設計（tape-out），5× AI4；與 SpaceX 合建德州研究 Fab</td><td>2026–27</td></tr>
+  </tbody>
+</table></div>
+<div class="take">
+  <b>解讀．</b>這些業務「零營收、全估值」：Cybercab 是唯一已從 PPT 走進馬路的（6/30 首次公開道路測試、100+ 台實車待命），Optimus 次之（7 月底投產），Robotaxi 則卡在 FSD v15、車隊僅 39 台。對投資人而言，<b>2026 H2 的 Cybercab 爬坡與 Optimus 試產，是檢驗「選擇權能否兌現」的第一批硬證據</b>。
+</div>
+
+<h3>1.6 現金流</h3>
+<div class="chartbox"><h4>營運現金流 vs 自由現金流（億美元）— Q2'25 一度趨近於零</h4><div class="chart"><canvas id="tslaCash"></canvas></div></div>
+<div class="take">
+  <b>連續解讀．</b>自由現金流劇烈波動：Q1'25 6.6 億 → Q2'25 僅 1.5 億（資本支出高峰＋本業弱）→ Q3'25 彈到 39.9 億。期末現金升至 447 億，體質極穩——惟 Q1'26 花 <b>20 億美元買進 SpaceX 股權</b>，把兩家公司在帳上正式綁定。
+</div>
+
+<footer>
+  <b>Tesla 資料來源．</b>官方 8-K（SEC EDGAR，Q2 2024–Q1 2026 全部季度）；分析師共識：LSEG／Zacks／Bloomberg 彙整；Cybercab/Optimus/Robotaxi 進度：Electrek、CNBC、robotaxitracker。 <b>免責：</b>僅供研究參考，非投資建議。資料更新日 2026-07-02（Q2 交付 7/2 公佈、財報 7/22）。
+</footer>
+
+</div><!-- /viewT -->
+
+<!-- =================================================================== -->
+<!-- ========================= VIEW S (SpaceX) ======================== -->
+<!-- =================================================================== -->
+<div class="view viewB viewS" id="viewS">
+<div class="kicker">SpaceX · Quarterly Deep Dive · 逐季深度</div>
+<p style="font-size:23px;font-weight:800;margin:8px 0 4px">🚀 SpaceX（SPCX）逐季深度</p>
+<div class="note">2026/6/12 上市 ｜ 上市前估算 vs S-1 實際 ｜ 業務樹狀拆解 ｜ Q2 2026 首份公開財報展望</div>
+
+<!-- ============ 頂部：下一季預期 vs 實際（發佈後把「實際/差異」欄填上即可一目了然） ============ -->
+<div class="expect">
+  <div class="ehead"><div class="t">⏭️ Q2 2026 預期 vs 實際 — 史上首份公開季報</div><div class="d" id="esumS"></div></div>
+  <div class="egrid" id="egridS"></div>
+  <p class="note">首份公開季報、無華爾街正式共識，「預期」為第三方／本頁估算（Motley Fool、Quilty、S-1 外推），落差可能很大。已公佈項目（發射、訂戶）已亮燈示範。另注意：<b>首份季報後內部人鎖倉部分解禁（約 7%）</b>。</p>
+</div>
+
+<div class="callout">
+  <b>資料性質警告．</b>SpaceX IPO 前為私有公司，<u>從不公佈季度損益</u>，故無傳統「季度共識」。本頁「預測 vs 實際」採<b>年度</b>口徑：上市前第三方估算（Sacra／Payload／Morgan Stanley）對照 <b>2026/5/20 S-1 官方實際</b>。可逐季追蹤的硬指標僅<b>發射次數</b>與<b>訂戶里程碑</b>。<b>Q2 2026 將是 SpaceX 史上首份公開季報</b>（日期未定，多方傳 8/6）。
+</div>
+<div class="kpis">
+  <div class="kpi"><div class="lbl">2025 營收</div><div class="val">187 億美元</div><div class="chg pos">+33% YoY（S-1）</div></div>
+  <div class="kpi"><div class="lbl">Starlink 訂戶</div><div class="val">1,200 萬+</div><div class="chg pos">2026 年中</div></div>
+  <div class="kpi"><div class="lbl">AI 段（Grok/X）</div><div class="val">−64 億美元</div><div class="chg neg">2025 營業虧損</div></div>
+  <div class="kpi"><div class="lbl">SPCX 股價（7/1）</div><div class="val">$170.9</div><div class="chg pos">+27% vs IPO 價 $135 · 市值 ~2.1 兆美元</div></div>
+</div>
+
+<!-- ============ SPACEX 預測 vs 實際 ============ -->
+<h3>2.0 市場預測 vs 實際 vs 超預期（年度營收，含同比）<span style="font-size:11px;background:#f5b942;color:#0b0e14;border-radius:4px;padding:1px 6px;font-weight:800">NEW</span></h3>
+<p class="note">SpaceX 過往私有、無季度共識，故以<b>年度</b>對照：上市前外界<b>估算</b> vs S-1 <b>官方實際</b>。重點：S-1 揭露的真實營收<b>連年大幅高於市場估算</b>——尤其 2025 實際 187 億美元遠超 IPO 前約 155 億美元的估算，是支撐其超高估值的關鍵驚喜。</p>
+<div class="chartbox"><h4>年度營收：上市前估算 vs S-1 實際（億美元）— 含 2026 共識</h4><div class="chart"><canvas id="spxBeatRev"></canvas></div></div>
+<div class="scroll"><table>
+  <thead><tr><th>年度</th><th>上市前市場估算</th><th>S-1 官方實際</th><th>同比 YoY</th><th>結果</th><th>說明</th></tr></thead>
+  <tbody>
+    <tr><td class="metric-row">2023</td><td>~80 億</td><td>87 億</td><td>—</td><td><span class="pos-c">略超</span></td><td style="text-align:left">Starlink 首超發射、現金流引擎易主</td></tr>
+    <tr><td class="metric-row">2024</td><td>~130 億</td><td>141 億</td><td class="pos-c">+62%</td><td><span class="pos-c">超預期</span></td><td style="text-align:left">Starlink 一年近翻倍至 77 億</td></tr>
+    <tr><td class="metric-row">2025</td><td>~155 億</td><td>187 億</td><td class="pos-c">+33%</td><td><span class="pos-c">大幅超預期</span></td><td style="text-align:left">S-1 首揭，Starlink 114 億(61%)＋AI 段首入帳 32 億</td></tr>
+    <tr style="background:rgba(245,185,66,.08)"><td class="metric-row"><b>2026E</b></td><td colspan="2"><b>共識 ~240 億（區間 238–368 億）</b></td><td class="pos-c">≈+28%</td><td><span class="flat">待驗證</span></td><td style="text-align:left">Starlink 單獨估 ~200 億；Colossus 算力租賃 Q2 起入帳</td></tr>
+  </tbody>
+</table></div>
+<p class="note">＊估算來源：Sacra、Payload、Morgan Stanley 等上市前研究；實際為 SpaceX S-1（2026/5/20）。2026 為分析師區間，離散極大（Morningstar 368 億至保守 238 億美元）。</p>
+<div class="callout warn">
+  <b>Q2 2026 展望（史上首份公開季報，日期未定、多方傳 8/6）：</b>市場將首次用「實際季度數字」檢驗 SpaceX。關鍵看點：(1) <b>Starlink 淨增用戶 × ARPU</b>——2026/5 漲價最高 US$10/月，能否量價齊升；(2) <b>Colossus 算力租賃入帳</b>——Anthropic 12.5 億美元/月（5 月起）＋Google 9.2 億/月（6 月起）合計約 21.7 億/月，Q2 起將顯著推高 AI 段營收；(3) <b>AI 段營業虧損能否收斂</b>（Q1'26 −24.7 億）；(4) Starship Flight 13（V3 第二飛，暫定 7/31）——Flight 12（5 月）僅部分成功，12 飛 7 成 5 敗。<b>另：首份季報後內部人鎖倉部分解禁（約 7%），為潛在供給壓力。</b>
+</div>
+<div class="take">
+  <b>連續解讀．</b>SpaceX 的「預測 vs 實際」故事與 Tesla 相反：<b>連年「超預期」</b>——私有期間外界普遍低估其真實規模，S-1 一掀牌，2024／2025 實際營收分別比估算高約 8%／20%。但 2026 起進入「公開受檢」新階段，<b>驚喜紅利不再，取而代之的是逐季被放大鏡檢視</b>：Starlink 漲價後的留存、Colossus 租賃兌現、AI 段燒錢收斂，每一項都會即時反映到股價。<u>從「神秘溢價」轉為「執行力證明」是 SPCX 上市後的核心轉變。</u>
+</div>
+
+<h3>2.1 營收與業務分部（年度折線，億美元）</h3>
+<p class="note">三大業務：① Starlink 衛星寬頻（唯一賺錢）② 發射服務 Launch（對外）③ AI 段＝xAI/Grok＋X（2026/2 併入，2025 首次入帳）。</p>
+<div class="chartbox"><h4>年度分部營收折線（分部拆分為估算）— Starlink 三級跳、發射觸頂、AI 段橫空出現</h4><div class="chart"><canvas id="spxRev"></canvas></div></div>
+<div class="scroll"><table id="spxRevTable">
+  <thead><tr><th>業務分部（億美元）</th><th>2023</th><th>2024</th><th>2025</th><th>備註</th></tr></thead>
+  <tbody></tbody>
+</table></div>
+<div class="seq">
+  <div class="q"><div class="ql">2023</div><div class="qt">總營收 87 億；Starlink 42 億（48%）首次超越發射，現金流引擎易主。</div></div>
+  <div class="q"><div class="ql">2024</div><div class="qt"><span class="pos-c">+62%</span> 至 141 億；Starlink 77 億（55%）一年近翻倍，發射 54 億。</div></div>
+  <div class="q"><div class="ql">2025</div><div class="qt">+33% 至 187 億；Starlink 114 億（61%）、發射回落 41 億、<span class="neg-c">AI 段（Grok/X）首入帳 32 億但營業虧 −64 億</span>。</div></div>
+</div>
+<div class="take">
+  <b>連續解讀．</b>三條線方向迥異：<b>Starlink</b> 是陡峭上升（4.2→7.7→11.4），已成主引擎且唯一獲利（2025 營業利潤 44 億、EBITDA 利潤率約 63%）；<b>發射</b> 觸頂回落（35→54→41 億）——不是發得少（165 發），而是近 3/4 自用打 Starlink 衛星，對外僅 43 發；<b>AI 段</b> 2025 橫空出現，營收 32 億卻燒掉 64 億營業虧損，是把整體拖入 GAAP 淨虧 49 億的元兇。SpaceX 正從「發射公司」變「電信＋AI 公司」。
+</div>
+
+<h3 id="spxTree">2.2 業務樹狀拆解：每個業務再往下細分 <span style="font-size:11px;background:#f5b942;color:#0b0e14;border-radius:4px;padding:1px 6px;font-weight:800">NEW</span></h3>
+<p class="note">把 SpaceX 拆成 <b>四大業務 × 子業務</b>。深色列＝業務合計（S-1 實際），縮排列＝子業務（多為估算拆分，已標註）。金額單位：億美元。</p>
+<div class="scroll"><table class="wide">
+  <thead><tr><th>業務 / 子業務</th><th>2025 全年</th><th>最新狀態（26 H1）</th><th>Q2'26 看點</th></tr></thead>
+  <tbody>
+    <tr class="biz" style="--bc:#a855f7"><td>🛰️ ① Starlink 衛星通訊</td><td>營收 114（61%）· 營業利潤 +44</td><td>1,200 萬戶（6/4）· 5 月漲價最高 $10/月</td><td>淨增戶 × ARPU 能否量價齊升</td></tr>
+    <tr><td class="sub">消費者住宅寬頻</td><td>估 ~75–80（約 7 成）</td><td>訂戶主力；160+ 國</td><td>漲價後留存率</td></tr>
+    <tr><td class="sub">企業／航空／海事</td><td>估 ~15–20</td><td>高 ARPU；航空 WiFi（聯航等）、郵輪擴約</td><td>企業戶滲透速度</td></tr>
+    <tr><td class="sub">Starshield 政府／軍用</td><td>估 ~12–15</td><td>NRO 偵察星座 ~18 億合約＋國防頻寬</td><td>新國防訂單</td></tr>
+    <tr><td class="sub">直連手機 D2C</td><td>起步</td><td>T-Mobile 商轉＋併 EchoStar AWS-4/H 頻譜</td><td>D2C 用戶數首揭？</td></tr>
+    <tr><td class="sub">終端硬體銷售</td><td>估 ~8–10</td><td>標準碟／Mini，常態促銷換量</td><td>硬體毛利拖累幅度</td></tr>
+    <tr class="biz" style="--bc:#5b8def"><td>🚀 ② 發射服務 Launch</td><td>營收 41 · 165 發</td><td>26 H1 共 77 發（全年估 ~140–145）</td><td>對外發射單價與排程</td></tr>
+    <tr><td class="sub">NASA／政府任務</td><td>估 ~20–24（約半數）</td><td>Commercial Crew、CRS、NSSL P3、月球版 HLS ~40 億合約</td><td>HLS 里程碑進帳</td></tr>
+    <tr><td class="sub">商業對外發射</td><td>估 ~14–18</td><td>2025 對外僅 43 發；F9 標價 ~$70M/發</td><td>市佔 vs 藍源 New Glenn</td></tr>
+    <tr><td class="sub">拼車 Transporter／Bandwagon</td><td>估 ~2–3</td><td>小衛星共乘常態化</td><td>班次頻率</td></tr>
+    <tr><td class="sub">Starship（研發中）</td><td>0（尚無營收）</td><td>12 飛 7 成 5 敗；Flight 13（V3 第二飛）暫定 7/31</td><td>26 H2 軌道酬載商業化目標</td></tr>
+    <tr><td class="sub">內部自用（部署 Starlink）</td><td>—（無外部營收）</td><td>近 3/4 發射自用；H1 已送 ~1,600 顆衛星</td><td>V3 衛星上 Starship？</td></tr>
+    <tr class="biz" style="--bc:#f5b942"><td>🤖 ③ AI 段 xAI／Grok／X</td><td>營收 32 · 營業虧損 −64</td><td>Q1'26 營收 8.2、虧 −24.7；Grok MAU ~1.17 億</td><td>Colossus 租賃入帳後虧損能否收斂</td></tr>
+    <tr><td class="sub">Colossus 算力租賃</td><td>0（26Q2 起入帳）</td><td>Anthropic 12.5 億/月（5 月起）＋Google 9.2 億/月（6 月起）；第 3 租客 Reflection AI 簽 Colossus 2：1.5 億/月（26/7/1 起至 2029、GB300），全期合計 ~63 億</td><td>Q2 首季貢獻估 ~34 億</td></tr>
+    <tr><td class="sub">Grok 訂閱／API</td><td>估 ~10–14</td><td>SuperGrok／Premium 層；MAU 增長趨平</td><td>變現率（付費滲透）</td></tr>
+    <tr><td class="sub">X 平台（廣告＋訂閱）</td><td>估 ~18–22</td><td>廣告主回流中；與 Grok 深度整合</td><td>廣告回升力道</td></tr>
+    <tr><td class="sub">AI 基建 capex（現金流出）</td><td>−127（xAI 口徑）</td><td>Q1'26 已 −77（買 GPU＋建數據中心/電力）；Colossus 55.5 萬顆 GPU、另訂 ~30 萬顆 Blackwell</td><td>IPO 落袋 850 億後加速或放緩</td></tr>
+    <tr class="biz" style="--bc:#22c55e"><td>🌌 ④ 前沿／未來選擇權</td><td>0</td><td>純敘事、零營收</td><td>任何時間表更新</td></tr>
+    <tr><td class="sub">火星計畫</td><td>—</td><td>2026/11–12 首個火星視窗（無人 Starship）</td><td>是否如期發射</td></tr>
+    <tr><td class="sub">軌道數據中心（太空算力）</td><td>—</td><td>xAI 長期論述：衛星載算力＋太陽能</td><td>技術驗證進度</td></tr>
+    <tr><td class="sub">月球 HLS（Artemis III）</td><td>（計入政府任務）</td><td>月球版 Starship 開發中</td><td>NASA 時程調整</td></tr>
+  </tbody>
+</table></div>
+<div class="take">
+  <b>解讀．</b>樹狀圖看清三件事：① <b>Starlink 是現金牛</b>——四大業務中唯一大幅獲利，且子業務全數向上（消費者衝量後轉收割、政府/航空高 ARPU 補位）；② <b>發射的「營收」被低估也被高估</b>——帳面 41 億裡近半是政府長約（穩定），但 3/4 的發射能量其實是「內部投資」在打 Starlink；③ <b>AI 段 Q2 起質變</b>——Colossus 租賃單季 ~34 億入帳，一舉超過 Grok+X 全年營收，AI 段從「純燒錢」變「有大客戶長約的算力房東」，這是首份季報最大的結構性看點。
+</div>
+
+<h3>2.3 「用戶」：Starlink 訂戶與發射節奏</h3>
+<div class="grid g2">
+  <div class="chartbox"><h4>Starlink 訂戶（百萬，年底）— 每年近乎翻倍</h4><div class="chart sm"><canvas id="spxSubs"></canvas></div></div>
+  <div class="chartbox"><h4>年度發射次數 — 連 6 年破紀錄</h4><div class="chart sm"><canvas id="spxLaunch"></canvas></div></div>
+</div>
+<div class="take">
+  <b>連續解讀．</b>訂戶是 SpaceX 真正的「用戶」資產：1M（'22）→2.3M（'23）→4.6M（'24）→9.2M（'25 底）→10.3M（'26/2）→12M＋（'26 中），跨 160+ 國。代價是 <b>ARPU 下滑</b>——2023→2025 月費降 18% 至約 $81。轉折：2026/5 反手漲價最高 $10/月、併 EchoStar 頻譜、與 T-Mobile 推衛星直連手機——從「衝量」轉「收割」。發射逐年破紀錄（96→134→165）但商業意義已從營收變成 Starlink 的部署管道。<span class="note">＊季度級訂戶/發射未完整逐季披露，2025 已知 Q1 發射 36 次。</span>
+</div>
+
+<h3>2.4 AI 段細分：xAI / Grok / X</h3>
+<div class="grid g2">
+  <div class="chartbox"><h4>AI 段營收 vs 營業虧損（億美元）— 收入小、虧損巨</h4><div class="chart sm"><canvas id="spxAI"></canvas></div></div>
+  <div class="card">
+    <h4>AI 段速覽（S-1 揭露）</h4>
+    <table><tbody>
+      <tr class="metric-row"><td>2025 營收</td><td>32.0 億</td></tr>
+      <tr class="metric-row"><td>2025 營業虧損</td><td class="neg">−63.6 億</td></tr>
+      <tr class="metric-row"><td>Q1'26 營收</td><td>8.2 億</td></tr>
+      <tr class="metric-row"><td>Q1'26 營業虧損</td><td class="neg">−24.7 億</td></tr>
+      <tr class="metric-row"><td>Grok MAU（'26/3）</td><td>~1.17 億</td></tr>
+      <tr class="metric-row"><td>AI 基建年燒錢</td><td class="neg">~140 億</td></tr>
+    </tbody></table>
+    <p class="note" style="margin-bottom:0">構成＝xAI（Grok 模型）＋X 平台＋軌道/地面算力。Grok 與 X 深度整合提供即時語境；變現方向為「Premium Intelligence」訂閱層。</p>
+  </div>
+</div>
+<div class="take">
+  <b>解讀．</b>AI 段是 SpaceX 估值「敘事的放大器、現金流的黑洞」：靠它把估值從 0.8 兆推到 1.75 兆美元，卻一年燒掉 64 億營業虧損、基建年耗 140 億，全靠 Starlink 的營業利潤補貼。投資人要盯的是<b>虧損能否逐季收斂、Grok 能否真正變現</b>——這是 SPCX 從「太空股」變「AI 股」後的新風險源。
+</div>
+
+<h3>2.5 估值階梯與獲利全貌</h3>
+<div class="grid g2">
+  <div class="chartbox"><h4>估值階梯（兆美元）— 上市後續漲至 ~2.1 兆</h4><div class="chart sm"><canvas id="spxVal"></canvas></div></div>
+  <div class="card">
+    <h4>2025 獲利全貌（S-1）</h4>
+    <table><tbody>
+      <tr class="metric-row"><td>總營收</td><td>187 億</td></tr>
+      <tr class="metric-row"><td>調整後 EBITDA</td><td class="pos">66 億</td></tr>
+      <tr class="metric-row"><td>Starlink 營業利潤</td><td class="pos">44 億</td></tr>
+      <tr class="metric-row"><td>AI 段營業虧損</td><td class="neg">−64 億</td></tr>
+      <tr class="metric-row"><td>GAAP 淨利（虧損）</td><td class="neg">−49 億</td></tr>
+    </tbody></table>
+    <p class="note" style="margin-bottom:0">EBITDA 為正但 GAAP 大虧——差額來自鉅額 capex、股酬、債務利息，以及併入 xAI/X 的 AI 段虧損。Musk 曾警告若 Starship 達不到「每兩週一射」，有「真實破產風險」。</p>
+  </div>
+</div>
+<div class="take">
+  <b>連續解讀．</b>估值階梯：2,100 億（'24/6）→ 3,500 億（'24/12）→ 4,000 億（'25/7）→ 8,000 億（'25/12）→ ~1.25 兆（'26/2 併 xAI）→ ~1.75 兆（IPO 定價 $135）→ <b>~2.1 兆美元（'26/7/1 股價 $170.86，較 IPO +27%）</b>。6/12 掛牌首日開 $150、收 $161（+19%）。但須認清：(1) 標的是 SpaceX-xAI-X 綜合體，非純 Starlink；(2) 2025 GAAP 仍淨虧 49 億；(3) B 股 10 票/股讓 Musk 永久控制，公眾股東有經濟風險無治理權；(4) 首份季報後內部人鎖倉部分解禁（約 7%）。
+</div>
+
+<div class="callout">
+  <b>交叉持股提醒：</b>Tesla 於 Q1'26 投入 <b>20 億美元買進 SpaceX 股權</b>，兩者並合建德州晶圓廠、共用 AI 供應鏈，命運漸綁定——持有任一方，等於間接承擔另一方的執行風險。Tesla 逐季財報詳見上方「🚗 Tesla 逐季深度」頁。
+</div>
+
+<footer>
+  <b>SpaceX 資料來源．</b>2026/5/20 S-1（SEC）、Sacra、Payload、Morgan Stanley、CNBC、SpaceNews 發射統計、Yahoo Finance／Investing.com（SPCX 股價）。SpaceX 所有財務為年度或估算，已標註；2026 為分析師區間。 <b>免責：</b>僅供研究參考，非投資建議。資料更新日 2026-07-02。
+</footer>
+
+<script>
+/* ===== Tesla page charts ===== */
+function initChartsT(){
+  Chart.defaults.color='#94a3b8';
+  Chart.defaults.font.family='-apple-system,"Segoe UI","PingFang TC",sans-serif';
+  Chart.defaults.font.size=12;
+  const grid={color:'rgba(255,255,255,.05)'};
+  const C={tsla:'#e3242b',tsla2:'#ff6b6b',energy:'#22c55e',svc:'#3b82f6',gold:'#f5b942',spx:'#5b8def',spx2:'#a855f7',purple:'#a855f7',gray:'rgba(148,163,184,.5)'};
+  const Q=['Q2 24','Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25','Q1 26'];
+  const T={
+    auto:[19878,20016,19798,13967,16661,21205,17693,16234],
+    energy:[3014,2376,3061,2730,2789,3415,3837,2408],
+    svc:[2608,2790,2848,2638,3046,3475,3371,3745],
+    total:[25500,25182,25707,19335,22496,28095,24901,22387],
+    gm:[18.0,19.8,16.3,16.3,17.2,18.0,20.1,21.1],
+    opm:[6.3,10.8,6.2,2.1,4.1,5.8,5.7,4.2],
+    egm:[24.5,30.5,25.2,28.8,30.3,31.4,28.6,39.5],
+    niG:[1478,2167,2317,409,1172,1373,840,477],
+    niN:[1812,2505,2566,934,1393,1770,1761,1453],
+    ebitda:[3674,4665,4922,2814,3401,4227,4154,3668],
+    eps:[0.42,0.62,0.66,0.12,0.33,0.39,0.24,0.13],
+    deliv:[443956,462890,495570,336681,384122,497099,418227,358023],
+    prod:[410831,469796,459445,362615,410244,447450,434358,408386],
+    storage:[9.4,6.9,11.0,10.4,9.6,12.5,14.2,8.8],
+    sc:[6473,6706,6975,7131,7377,7753,8182,8463],
+    fsd:[null,null,null,0.85,0.95,1.04,1.10,1.28],
+    ocf:[3612,6255,4814,2156,2540,6238,3813,3937],
+    fcf:[1342,2742,2031,664,146,3990,1420,1444]
+  };
+  const fill=(id,rows)=>{const tb=document.querySelector(id+' tbody');rows.forEach(([k,arr,u])=>{let tr='<tr class="metric-row"><td>'+k+'</td>';arr.forEach(v=>tr+='<td>'+(v==null?'\u2014':u=='%'?v+'%':u=='$'?'US$'+v:u=='g'?v:u=='y'?(v/100).toFixed(1):FMT(v))+'</td>');tr+='</tr>';tb.innerHTML+=tr;});};
+  fill('#tslaRevTable',[['汽車 Automotive',T.auto,'y'],['能源 Energy',T.energy,'y'],['服務 Services',T.svc,'y'],['總營收 Total',T.total,'y']]);
+  fill('#tslaProfitTable',[['毛利率',T.gm,'%'],['營業利潤率',T.opm,'%'],['GAAP 淨利',T.niG,'y'],['非 GAAP 淨利',T.niN,'y'],['調整後 EBITDA',T.ebitda,'y'],['稀釋 EPS（美元/股）',T.eps,'$']]);
+  fill('#tslaOpsTable',[['交付 台',T.deliv],['產量 台',T.prod],['儲能 GWh',T.storage,'g'],['FSD 訂閱 M',T.fsd,'g'],['超充站 座',T.sc]]);
+  const opts=(pct)=>({responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'\u2014':pct?c.parsed.y+'%':FMT(c.parsed.y))}}},
+    scales:{x:{grid},y:{grid,ticks:{callback:v=>pct?v+'%':FMT(v)}}}});
+  const moneyOpts={responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'待公佈':(c.parsed.y/100).toFixed(1)+' 億美元')}}},scales:{x:{grid},y:{grid,ticks:{callback:v=>(v/100).toFixed(0)+' 億'}}}};
+  const mk=(id,cfg)=>{var el=document.getElementById(id);if(el)CHARTS.push(new Chart(el,cfg));};
+  mk('tslaBeatRev',{type:'bar',data:{labels:['Q2 24','Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25','Q1 26','Q2 26E'],datasets:[
+    {label:'市場預測營收',data:[251.0,253.7,275.0,214.0,227.4,264.0,251.4,226.4,245.2],backgroundColor:C.gray},
+    {label:'實際營收',data:[255.0,251.8,257.1,193.4,225.0,281.0,249.0,223.9,null],backgroundColor:C.tsla}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'待公佈':c.parsed.y+' 億美元')}}},scales:{x:{grid},y:{grid,ticks:{callback:v=>v+' 億'}}}}});
+  mk('tslaRev',{type:'line',data:{labels:Q,datasets:[
+    {label:'汽車',data:T.auto,borderColor:C.tsla,backgroundColor:'rgba(227,36,43,.08)',tension:.3,borderWidth:2.5,fill:true},
+    {label:'能源',data:T.energy,borderColor:C.energy,tension:.3,borderWidth:2.5},
+    {label:'服務',data:T.svc,borderColor:C.svc,tension:.3,borderWidth:2.5},
+    {label:'總營收',data:T.total,borderColor:C.gold,borderDash:[5,4],tension:.3,borderWidth:2,pointRadius:2}
+  ]},options:moneyOpts});
+  mk('tslaMargin',{type:'line',data:{labels:Q,datasets:[
+    {label:'整體毛利率',data:T.gm,borderColor:C.gold,backgroundColor:'rgba(245,185,66,.1)',tension:.3,fill:true,borderWidth:2.5},
+    {label:'營業利潤率',data:T.opm,borderColor:C.tsla2,tension:.3,borderWidth:2.5}
+  ]},options:opts(true)});
+  mk('tslaEnergyGM',{type:'line',data:{labels:Q,datasets:[
+    {label:'能源毛利率',data:T.egm,borderColor:C.energy,backgroundColor:'rgba(34,197,94,.12)',tension:.3,fill:true,borderWidth:2.5}
+  ]},options:opts(true)});
+  mk('tslaProfit',{type:'bar',data:{labels:Q,datasets:[
+    {label:'GAAP 淨利',data:T.niG,backgroundColor:C.tsla},
+    {label:'非 GAAP 淨利',data:T.niN,backgroundColor:C.svc},
+    {type:'line',label:'調整後 EBITDA',data:T.ebitda,borderColor:C.gold,borderWidth:2.5,tension:.3}
+  ]},options:moneyOpts});
+  mk('tslaDeliv',{type:'bar',data:{labels:Q,datasets:[
+    {label:'交付',data:T.deliv,backgroundColor:C.tsla},{label:'產量',data:T.prod,backgroundColor:C.gray}
+  ]},options:opts(false)});
+  mk('tslaStorage',{type:'bar',data:{labels:Q,datasets:[{label:'儲能 GWh',data:T.storage,backgroundColor:C.energy}]},options:opts(false)});
+  mk('tslaFSD',{type:'line',data:{labels:Q,datasets:[{label:'FSD 訂閱 (M)',data:T.fsd,borderColor:C.purple,backgroundColor:'rgba(168,85,247,.12)',tension:.3,fill:true,borderWidth:2.5}]},options:opts(false)});
+  mk('tslaSC',{type:'line',data:{labels:Q,datasets:[{label:'超充站',data:T.sc,borderColor:C.svc,backgroundColor:'rgba(59,130,246,.1)',tension:.3,fill:true,borderWidth:2.5}]},options:opts(false)});
+  mk('tslaCash',{type:'bar',data:{labels:Q,datasets:[
+    {label:'營運現金流',data:T.ocf,backgroundColor:'rgba(59,130,246,.6)'},{label:'自由現金流',data:T.fcf,backgroundColor:C.gold}
+  ]},options:moneyOpts});
+}
+
+/* ===== SpaceX page charts ===== */
+function initChartsS(){
+  Chart.defaults.color='#94a3b8';
+  Chart.defaults.font.family='-apple-system,"Segoe UI","PingFang TC",sans-serif';
+  Chart.defaults.font.size=12;
+  const grid={color:'rgba(255,255,255,.05)'};
+  const C={tsla:'#e3242b',tsla2:'#ff6b6b',energy:'#22c55e',svc:'#3b82f6',gold:'#f5b942',spx:'#5b8def',spx2:'#a855f7',purple:'#a855f7',gray:'rgba(148,163,184,.5)'};
+  const opts=(pct)=>({responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'—':pct?c.parsed.y+'%':FMT(c.parsed.y))}}},
+    scales:{x:{grid},y:{grid,ticks:{callback:v=>pct?v+'%':FMT(v)}}}});
+  const mk=(id,cfg)=>{var el=document.getElementById(id);if(el)CHARTS.push(new Chart(el,cfg));};
+  mk('spxBeatRev',{type:'bar',data:{labels:['2023','2024','2025','2026E'],datasets:[
+    {label:'上市前估算',data:[8.0,13.0,15.5,24.0],backgroundColor:C.gray},
+    {label:'S-1 實際',data:[8.7,14.1,18.7,null],backgroundColor:C.spx}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'待公佈':(c.parsed.y*10).toFixed(0)+' 億美元')}}},scales:{x:{grid},y:{grid,ticks:{callback:v=>(v*10).toFixed(0)+' 億'}}}}});
+  const SX={years:['2023','2024','2025'],total:[8.7,14.1,18.7],starlink:[4.2,7.7,11.4],launch:[3.5,5.4,4.1],ai:[null,null,3.2],
+    subsL:['2022','2023','2024','2025','2026/2','2026中'],subs:[1.0,2.3,4.6,9.2,10.3,12.0],
+    launches:[96,134,165],valL:['2024/6','2024/12','2025/7','2025/12','2026/2','IPO','2026/7'],val:[210,350,400,800,1250,1750,2100],
+    aiRev:[3201,818],aiLoss:[-6355,-2469],aiL:['2025 全年','Q1 2026']};
+  (function(){const tb=document.querySelector('#spxRevTable tbody');
+    [['Starlink 連線',SX.starlink,'2025 佔 61% · 唯一獲利源'],
+     ['發射服務（對外）',SX.launch,'對外為主；自用佔約 3/4'],
+     ['AI 段（Grok/X）',SX.ai,'2026/2 併入 · 虧 64 億'],
+     ['總營收',SX.total,'2025 +33% YoY（含其他約 10 億）']].forEach(([k,arr,n])=>{
+      let tr='<tr class="metric-row"><td>'+k+'</td>';arr.forEach(v=>tr+='<td>'+(v==null?'\u2014':(v*10).toFixed(0)+' 億')+'</td>');tr+='<td style="text-align:left;color:#94a3b8;font-size:12px">'+n+'</td></tr>';tb.innerHTML+=tr;});})();
+  mk('spxRev',{type:'line',data:{labels:SX.years,datasets:[
+    {label:'Starlink',data:SX.starlink,borderColor:C.spx,backgroundColor:'rgba(91,141,239,.1)',tension:.3,fill:true,borderWidth:2.5},
+    {label:'發射服務',data:SX.launch,borderColor:C.gold,tension:.3,borderWidth:2.5},
+    {label:'AI 段(Grok/X)',data:SX.ai,borderColor:C.spx2,tension:.3,borderWidth:2.5,spanGaps:false,pointRadius:4},
+    {label:'總營收',data:SX.total,borderColor:'#cbd5e1',borderDash:[5,4],tension:.3,borderWidth:2,pointRadius:2}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y==null?'\u2014':(c.parsed.y*10).toFixed(0)+' 億美元')}}},
+    scales:{x:{grid},y:{grid,ticks:{callback:v=>(v*10).toFixed(0)+' 億'}}}}});
+  mk('spxSubs',{type:'line',data:{labels:SX.subsL,datasets:[{label:'Starlink 訂戶 (M)',data:SX.subs,borderColor:C.spx2,backgroundColor:'rgba(168,85,247,.12)',tension:.3,fill:true,borderWidth:2.5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.parsed.y+'M'}}},scales:{x:{grid},y:{grid,ticks:{callback:v=>v+'M'}}}}});
+  mk('spxLaunch',{type:'bar',data:{labels:SX.years,datasets:[{label:'年度發射',data:SX.launches,backgroundColor:C.spx}]},options:opts(false)});
+  mk('spxAI',{type:'bar',data:{labels:SX.aiL,datasets:[
+    {label:'營收',data:SX.aiRev,backgroundColor:C.spx},{label:'營業虧損',data:SX.aiLoss,backgroundColor:C.tsla}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+(c.parsed.y/100).toFixed(1)+' 億美元'}}},scales:{x:{grid},y:{grid,ticks:{callback:v=>(v/100).toFixed(0)+' 億'}}}}});
+  mk('spxVal',{type:'line',data:{labels:SX.valL,datasets:[{label:'估值（兆美元）',data:SX.val,borderColor:C.gold,backgroundColor:'rgba(245,185,66,.12)',tension:.25,fill:true,borderWidth:2.5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>(c.parsed.y/1000).toFixed(2)+' 兆美元'}}},scales:{x:{grid},y:{grid,ticks:{callback:v=>(v/1000).toFixed(2)+' 兆'}}}}});
+}
+</script>
+</div><!-- /viewS -->
+
+<!-- =================================================================== -->
+<!-- ============================ VIEW C ============================== -->
+<!-- =================================================================== -->
+<div class="view active viewC" id="viewC">
+<div class="kicker">Growth Tracker · 增速追蹤儀表板</div>
+<p style="font-size:23px;font-weight:800;margin:8px 0 4px">Musk 系統 · 全歷史增速追蹤</p>
+<div class="note">每個指標都以折線呈現「過去所有記錄」，並自動計算<b>期增（最新 vs 前一筆）</b>與<b>累計成長（最新 vs 最早）</b>，方便你一眼看出增速在加速或放緩。</div>
+
+<div class="sumwrap">
+  <h3>📊 一眼總覽 · SpaceX</h3>
+  <div class="note" style="margin:0">財務以 <b>2025 財年（S-1 官方）</b>為主、標註 2026 最新動態；金額單位億美元。想深入就看下方各卡。</div>
+  <div class="skpi">
+    <div class="k"><div class="kl">總收入 2025</div><div class="kv">187 億</div><div class="kc"><span class="pos2">+33% YoY</span>（2024 141 億）</div></div>
+    <div class="k"><div class="kl">總成本／支出 2025</div><div class="kv">~236 億</div><div class="kc">＞收入，故整體虧損</div></div>
+    <div class="k"><div class="kl">GAAP 淨利 2025</div><div class="kv neg2">−49 億</div><div class="kc">調整後 EBITDA <span class="pos2">+66 億</span></div></div>
+    <div class="k"><div class="kl">2026 新金牛</div><div class="kv pos2">21.7 億/月</div><div class="kc">Colossus 租賃（年化 ~260 億）</div></div>
+  </div>
+  <div class="note" style="margin:-4px 0 8px;font-size:11px">＊單位皆為美元；1 billion（十億）＝ 10 億。</div>
+  <div class="eb">
+    <div class="col earn">
+      <h4>💰 哪裡賺錢</h4>
+      • <b>Starlink</b>：收入 114 億（占 61%）、營業利潤 <span class="pos2">+44 億</span> — 唯一獲利引擎；用戶 1200 萬（2026/6）。<br>
+      • <b>發射服務</b>：41 億（對外為主，自用佔約 3/4）。<br>
+      • <b>Colossus 算力租賃</b>（2026 起）：Anthropic 12.5 億／月＋Google 9.2 億／月 ＝ <span class="pos2">21.7 億/月</span>，閒置算力變現。
+    </div>
+    <div class="col burn">
+      <h4>🔥 哪裡用錢／燒錢（細分到具體用途）</h4>
+      <b>① 買 GPU（最大單項，約占 AI capex 6 成）</b><br>
+      　Colossus 已裝 <b>55.5 萬顆 Nvidia GPU ≈ 花 180 億</b>；2025/10 又下單 <span class="neg2">~180 億</span> 買約 30 萬顆新一代 Blackwell（給 Colossus 2）。<br>
+      <b>② 建數據中心＋自建電力（約占 3 成）</b><br>
+      　Memphis Colossus 1（舊電廠改建）＋ Colossus 2（2026/1 上線）廠房土建；因電網不夠用，<b>自購燃氣渦輪發電</b>（與 Solaris 合資，已供 ~400MW，峰值需 1.2GW＝200 萬戶家庭用電）。<br>
+      <b>③ AI 段日常營運（人力＋訓練推理電費＋行銷）</b><br>
+      　收入僅 32 億卻營業虧 <span class="neg2">−64 億</span>（2025）— 整體轉虧主因。<br>
+      <b>④ 太空本業</b><br>
+      　Starship 研發<b>累計投入已超 150 億</b>（2025 單年 30 億）；Starlink 衛星製造＋部署（每顆 ~25 萬美元、3/4 發射為自用）。<br>
+      <span class="note">→ AI 建設 capex 合計：2025 全年 127 億、2026 Q1 單季 <span class="neg2">77 億</span>（年化 ~300 億）。細項拆分見下方「AI 建設 capex」卡。</span>
+    </div>
+  </div>
+  <div class="note" style="margin:12px 0 0">一句話：<b class="pos2">Starlink 在賺</b>、<b class="neg2">AI 段在燒</b>。2025 整體 GAAP 仍虧 49 億，但 EBITDA 已轉正 66 億；2026 靠 Colossus 出租新增 ~260 億 年化收入，有望改寫獲利結構。</div>
+</div>
+
+<div class="callout">
+  <b>怎麼用：</b>每張卡片＝一個指標的完整歷史折線，右上角可切換 <b>月／季／年</b> 視角（增速徽章也隨之變成環比/同比）。最上方是 <b>SpaceX 財務匯總</b>（收入／支出／利潤），看錢從哪賺、往哪花、最後賺賠多少。所有資料由 Claude 上網查證後更新，<b>無需手動輸入</b>——要更新時把資料夾裡的「更新提示詞」貼給 Claude 即可。<br>
+  <span class="note">＊基準取自 SEC 8-K、SpaceX S-1、Sacra/Tiger 等並核實至 2026-07-02；SpaceX 季度財務多為估算（僅年報＋S-1），年度錨定官方數，已於各卡註明。請當趨勢框架而非精算值。</span>
+</div>
+
+<h2>💰 SpaceX 財務匯總</h2>
+<div class="note" style="margin:-2px 0 8px">把錢從哪賺、往哪花、最後賺賠多少一次看懂。季度多為估算（SpaceX 僅年報＋S-1），<b>年度錨定官方數</b>；每卡可切「季／年」。支出卡已把 AI 建設拆成「<b>買 GPU</b>」與「<b>建數據中心＋電力</b>」兩條線；26Q2 為估算值（首份公開季報 7 月底／8 月初驗證）。</div>
+<div class="grid" id="cGroupSUM"></div>
+
+<h2>🚀 SpaceX 營運指標</h2>
+<div class="grid" id="cGroupSpaceX"></div>
+
+<h2>🚗 Tesla 系</h2>
+<div class="grid" id="cGroupTesla"></div>
+
+<footer>
+  <b>資料來源．</b>Tesla 逐季：官方 8-K（SEC EDGAR）。SpaceX：2026/5/20 S-1、Sacra、Tiger Brokers、CNBC、SpaceNews／Spaceflight Now 發射統計、Introl／SemiAnalysis（Colossus）。部分早期月份與估算值已於各卡註明。<b>免責：</b>僅供研究參考，非投資建議。資料更新日 2026-07-02（已對 SpaceX 發射、Starlink、Grok、Colossus 與租賃、xAI capex、SPCX 股價、Tesla Q2 交付共識、Robotaxi/Cybercab/Optimus 等核實最新公開數字）。
+</footer>
+
+<script>
+/* ===== Report C — Growth Tracker ===== */
+var cInit=false, cCharts={};
+var C_METRICS=[
+  // ===== 💰 SpaceX 財務匯總 (季度多為估算·年度錨定官方) =====
+  // 收入 (哪裡賺錢) | 支出 (哪裡用錢)
+  {id:'spx_sum_rev',group:'SUM',name:'SpaceX 總收入（哪裡賺錢）',unit:'億美元',dec:0,gran:'q',agg:'sum',
+   note:'分業務季度估算,年度錨定:2024 141億、2025 187億美元(Starlink 114／發射 41／AI 32)。26Q2 為估算:Colossus 算力租賃首次入帳(5月 Anthropic 12.5億＋6月加 Google 21.7億,季合計~34億),首份公開季報 7月底/8月初公佈。',
+   multi:[
+     {name:'Starlink',color:'#5b8def',data:[['24Q1',16],['24Q2',18],['24Q3',20],['24Q4',23],['25Q1',24],['25Q2',27],['25Q3',30],['25Q4',33],['26Q1',35],['26Q2',38]]},
+     {name:'發射服務',color:'#f5b942',data:[['24Q1',12],['24Q2',13],['24Q3',14],['24Q4',15],['25Q1',9],['25Q2',10],['25Q3',11],['25Q4',11],['26Q1',10],['26Q2',10]]},
+     {name:'AI段(Grok/X)',color:'#a855f7',data:[['24Q1',0],['24Q2',0],['24Q3',0],['24Q4',0],['25Q1',8],['25Q2',8],['25Q3',8],['25Q4',8],['26Q1',8],['26Q2',9]]},
+     {name:'Colossus算力租賃',color:'#22c55e',data:[['24Q1',0],['24Q2',0],['24Q3',0],['24Q4',0],['25Q1',0],['25Q2',0],['25Q3',0],['25Q4',0],['26Q1',0],['26Q2',34]]},
+     {name:'總收入',color:'#cbd5e1',dash:true,total:true,data:[['24Q1',28],['24Q2',31],['24Q3',34],['24Q4',38],['25Q1',41],['25Q2',45],['25Q3',49],['25Q4',52],['26Q1',53],['26Q2',91]]}
+   ]},
+  {id:'spx_sum_exp',group:'SUM',name:'SpaceX 現金支出（哪裡用錢）',unit:'億美元',dec:0,gran:'q',agg:'sum',neutral:true,
+   note:'現金用途(營運成本＋資本支出capex,非純 P&L),AI 建設已拆成「買GPU」與「建數據中心+電力」兩項(拆分比例為估算,約 65/35)。GPU=向 Nvidia 採購晶片與伺服器;數據中心=Memphis 廠房土建+自建燃氣渦輪電力。26Q2 為估算。',
+   multi:[
+     {name:'本業營運成本',color:'#5b8def',data:[['24Q1',16],['24Q2',17],['24Q3',18],['24Q4',19],['25Q1',19],['25Q2',20],['25Q3',20],['25Q4',21],['26Q1',21],['26Q2',22]]},
+     {name:'Starship研發',color:'#22c55e',data:[['24Q1',5],['24Q2',6],['24Q3',6],['24Q4',8],['25Q1',7],['25Q2',7],['25Q3',8],['25Q4',8],['26Q1',9],['26Q2',9]]},
+     {name:'買GPU(AI)',color:'#e3b341',data:[['24Q1',5],['24Q2',8],['24Q3',12],['24Q4',14],['25Q1',12],['25Q2',18],['25Q3',24],['25Q4',30],['26Q1',50],['26Q2',52]]},
+     {name:'建數據中心+電力(AI)',color:'#bc8cff',data:[['24Q1',3],['24Q2',4],['24Q3',6],['24Q4',8],['25Q1',6],['25Q2',10],['25Q3',12],['25Q4',15],['26Q1',27],['26Q2',28]]},
+     {name:'AI段營運成本',color:'#f85149',data:[['24Q1',0],['24Q2',0],['24Q3',0],['24Q4',0],['25Q1',21],['25Q2',23],['25Q3',25],['25Q4',27],['26Q1',33],['26Q2',34]]},
+     {name:'總支出',color:'#cbd5e1',dash:true,total:true,data:[['24Q1',29],['24Q2',35],['24Q3',42],['24Q4',49],['25Q1',65],['25Q2',78],['25Q3',89],['25Q4',101],['26Q1',140],['26Q2',145]]}
+   ]},
+  // 利潤 (賺賠全貌) — 單獨一列
+  {id:'spx_sum_profit',group:'SUM',name:'SpaceX 利潤全貌（賺／賠）',unit:'億美元',dec:0,gran:'q',agg:'sum',
+   note:'一眼看穿:Starlink 在賺(44億/2025)、AI 段在燒(−64億/2025);整體 EBITDA +66億 但 GAAP 淨虧 −49億美元。26Q2 為估算:Colossus 租賃 ~34億 入帳後,AI 段虧損料大幅收斂、GAAP 有望趨近損益兩平——7月底/8月初首份公開季報驗證。',
+   multi:[
+     {name:'Starlink營業利潤',color:'#22c55e',data:[['24Q1',5],['24Q2',6],['24Q3',6],['24Q4',8],['25Q1',9],['25Q2',10],['25Q3',12],['25Q4',13],['26Q1',12],['26Q2',14]]},
+     {name:'AI段營業虧損',color:'#f85149',data:[['24Q1',0],['24Q2',0],['24Q3',0],['24Q4',0],['25Q1',-13],['25Q2',-15],['25Q3',-17],['25Q4',-19],['26Q1',-25],['26Q2',-12]]},
+     {name:'調整後EBITDA',color:'#5b8def',data:[['24Q1',8],['24Q2',9],['24Q3',10],['24Q4',13],['25Q1',14],['25Q2',16],['25Q3',17],['25Q4',19],['26Q1',15],['26Q2',28]]},
+     {name:'GAAP淨利',color:'#e3b341',dash:true,total:true,data:[['24Q1',-2],['24Q2',-2],['24Q3',-3],['24Q4',-3],['25Q1',-10],['25Q2',-11],['25Q3',-13],['25Q4',-15],['26Q1',-18],['26Q2',-5]]}
+   ]},
+  // ===== 🚀 SpaceX 營運指標 =====  (相關聯指標左右成對)
+  // 列1：每月發射 | Starlink 每月訂戶
+  {id:'spx_launch',group:'SpaceX',name:'SpaceX 發射次數',unit:'次',dec:0,color:'#5b8def',gran:'m',agg:'sum',
+   note:'月度;2024 全年 134、2025 全年 165 發;2026 上半年共 77 發(76 獵鷹9＋1 重型,至 6/29;Shotwell 估全年 ~140–145)。近 3/4 為自用部署 Starlink;上半年已送 ~1,600 顆衛星入軌。',
+   data:[['24/01',9],['24/02',10],['24/03',13],['24/04',11],['24/05',12],['24/06',13],['24/07',12],['24/08',9],['24/09',14],['24/10',11],['24/11',10],['24/12',10],['25/01',12],['25/02',11],['25/03',13],['25/04',14],['25/05',13],['25/06',14],['25/07',15],['25/08',13],['25/09',14],['25/10',15],['25/11',15],['25/12',16],['26/01',12],['26/02',11],['26/03',13],['26/04',12],['26/05',13],['26/06',16]]},
+  {id:'spx_starlink',group:'SpaceX',name:'Starlink 訂戶',unit:'萬戶',dec:0,color:'#a855f7',gran:'m',agg:'last',
+   note:'月度為平滑估算;已知里程碑:2025 底 890萬、2026/3 1030萬、2026/6/4 達 1200萬戶(160+ 國)。第三方估 2026 底可達 1,400萬+、全年營收 ~200億美元;2026/5 起漲價最高 $10/月,「衝量」轉「收割」。',
+   data:[['24/01',300],['24/06',400],['24/12',460],['25/03',540],['25/06',650],['25/09',780],['25/12',890],['26/03',1030],['26/06',1200]]},
+  // 列2：營收分業務 | Starlink 營收(季)
+  {id:'spx_revseg',group:'SpaceX',name:'SpaceX 營收(分業務)',unit:'億美元',dec:0,gran:'y',agg:'sum',
+   note:'年度;季度分部未完整披露。Starlink 為唯一獲利源,AI 段 2025 首入帳。2024 總營收 141億、2025 187億美元;2026 共識 ~240億(區間 238–368,含 Colossus 租賃)。',
+   multi:[
+     {name:'Starlink',color:'#5b8def',data:[['2023',42],['2024',77],['2025',114]]},
+     {name:'發射服務',color:'#f5b942',data:[['2023',35],['2024',54],['2025',41]]},
+     {name:'AI段(Grok/X)',color:'#a855f7',data:[['2023',0],['2024',0],['2025',32]]},
+     {name:'總營收',color:'#cbd5e1',dash:true,total:true,data:[['2023',87],['2024',141],['2025',187]]}
+   ]},
+  {id:'spx_slrev',group:'SpaceX',name:'Starlink 營收',unit:'億美元',dec:0,color:'#3b82f6',gran:'q',agg:'sum',
+   note:'季度為估算;2024 全年 77億、2025 114億美元(+48%)、佔總營收 61%、營業利潤 44億。26Q2 估 38億(訂戶破 1200萬＋5月漲價),首份季報 7月底/8月初驗證。',
+   data:[['24Q1',16],['24Q2',18],['24Q3',20],['24Q4',23],['25Q1',24],['25Q2',27],['25Q3',30],['25Q4',33],['26Q1',35],['26Q2',38]]},
+  // 列3：AI 段營收 | Grok MAU  ← 指定左右成對
+  {id:'spx_airev',group:'SpaceX',name:'AI 段(Grok/X)營收',unit:'億美元',dec:2,color:'#22c55e',gran:'q',agg:'sum',
+   note:'季度估算;2025 全年 32億、2026 Q1 8.18億美元(S-1),年增近持平——Grok 訂閱變現卡關。⚠️ Colossus 算力租賃(26Q2 起 ~34億/季)另計,見下方租賃卡。',
+   data:[['25Q1',7.60],['25Q2',7.90],['25Q3',8.10],['25Q4',8.41],['26Q1',8.18],['26Q2',8.60]]},
+  {id:'spx_grok',group:'SpaceX',name:'Grok 月活用戶(MAU)',unit:'億',dec:2,color:'#bc8cff',gran:'m',agg:'last',
+   note:'官方(S-1):2026/3/31 達 1.17億(年初 0.64億,3 個月近翻倍)。⚠️ 3 月後增長趨於平緩:4–6 月網頁市占約 2.8% 持平,6 月估 ~1.2億。其餘月份估算。',
+   data:[['25/06',0.25],['25/09',0.38],['25/12',0.55],['26/01',0.64],['26/03',1.17],['26/06',1.20]]},
+  // 列4：AI 建設支出 | AI 段虧損
+  {id:'spx_aicapex',group:'SpaceX',name:'AI 建設 capex 細分（錢花在哪）',unit:'億美元',dec:0,neutral:true,gran:'q',agg:'sum',
+   note:'總額已知:2025 全年 127億、2026 Q1 77億美元(年化 ~300億);細項拆分為估算(業界慣例 GPU 約 6 成)。「買GPU」=向 Nvidia 採購晶片/伺服器:Colossus 累計 55.5萬顆 ≈ 180億,另訂 ~180億(約30萬顆 Blackwell 給 Colossus 2)。「數據中心+電力」=Memphis 廠房土建＋自購燃氣渦輪自建電廠(Solaris 合資、~400MW 已供電,峰值需 1.2GW)。靠 Starlink 利潤+募資(2025/7 募 100億、續洽沙特 PIF ~200億)供血。',
+   multi:[
+     {name:'買GPU/伺服器',color:'#e3b341',data:[['24Q1',5],['24Q2',8],['24Q3',12],['24Q4',14],['25Q1',12],['25Q2',18],['25Q3',24],['25Q4',30],['26Q1',50],['26Q2',52]]},
+     {name:'建數據中心+電力',color:'#bc8cff',data:[['24Q1',3],['24Q2',4],['24Q3',6],['24Q4',8],['25Q1',6],['25Q2',10],['25Q3',12],['25Q4',15],['26Q1',27],['26Q2',28]]},
+     {name:'合計 capex',color:'#cbd5e1',dash:true,total:true,data:[['24Q1',8],['24Q2',12],['24Q3',18],['24Q4',22],['25Q1',18],['25Q2',28],['25Q3',36],['25Q4',45],['26Q1',77],['26Q2',80]]}
+   ]},
+  {id:'spx_ailoss',group:'SpaceX',name:'AI 段營業虧損',unit:'億美元',dec:1,color:'#ef4444',isLoss:true,gran:'q',agg:'sum',
+   note:'季度估算;負數=虧損,值越接近 0=收斂(綠)。2025 全年虧 64億、2026 Q1 −24.7億美元(S-1)。26Q2 估 −12億:Colossus 租賃 ~34億 首次入帳,虧損料大幅收斂——首份公開季報(7月底/8月初)關鍵驗證點。',
+   data:[['25Q1',-13.0],['25Q2',-15.0],['25Q3',-17.0],['25Q4',-18.6],['26Q1',-24.7],['26Q2',-12.0]]},
+  // 列5：Colossus 算力 | Colossus 租賃月收入
+  {id:'spx_colossus',group:'SpaceX',name:'Colossus 算力(GPU)',unit:'萬顆',dec:1,color:'#4da3ff',gran:'m',agg:'last',
+   note:'已知:2026/1 達 55.5 萬顆(555k GPU、2GW 規劃、約 180億美元);2026/3 銘牌功率 1GW(實際運轉 330MW:Colossus 1 130MW＋Colossus 2 210MW)。另訂 ~30萬顆 Blackwell(180億)分批到貨,目標 100 萬顆。Grok 訓練需求放緩後轉對外出租(見右卡)。26/1 後為估算。',
+   data:[['24/07',10],['24/12',15],['25/06',23],['25/12',35],['26/01',55.5],['26/03',62],['26/06',70]]},
+  {id:'spx_colossus_rent',group:'SpaceX',name:'Colossus 算力租賃月收入(按租客)',unit:'億美元/月',dec:1,gran:'m',agg:'sum',
+   note:'2 大租客:Anthropic 2026/5 起 12.5億/月(Colossus 1、220k GPU、簽至 2029/5)、Google 2026/6 起 9.2億/月(~110k GPU);合計約 21.7億美元/月(年化 ~260億,遠超 Grok 訂閱)。第 3 租客 Reflection AI 簽 Colossus 2:1.5億/月(26/7/1 起至 2029,GB300,全期 ~63億)。26Q2 季報將首次入帳 ~34億。',
+   multi:[
+     {name:'Anthropic',color:'#e3b341',data:[['26/03',0],['26/04',0],['26/05',12.5],['26/06',12.5],['26/07',12.5]]},
+     {name:'Google',color:'#5b8def',data:[['26/03',0],['26/04',0],['26/05',0],['26/06',9.2],['26/07',9.2]]},
+     {name:'合計月租',color:'#cbd5e1',dash:true,total:true,data:[['26/03',0],['26/04',0],['26/05',12.5],['26/06',21.7],['26/07',21.7]]}
+   ]},
+  // ===== 🚗 Tesla =====
+  // 列1：FSD 訂閱 | Robotaxi 全美
+  {id:'tsla_fsd',group:'Tesla',name:'FSD 主動訂閱',unit:'萬',dec:0,color:'#a855f7',gran:'q',agg:'last',
+   note:'季度披露(8-K);Tesla 的「用戶」金礦,逐季皆增。2026 Q1 達 128 萬;下一筆 26Q2 於 7/22 財報揭露。',
+   data:[['25Q1',85],['25Q2',95],['25Q3',104],['25Q4',110],['26Q1',128]]},
+  {id:'tsla_robotaxi',group:'Tesla',name:'Robotaxi 全美無監督車隊',unit:'台',dec:0,color:'#f85149',gran:'m',agg:'last',
+   note:'全美無監督目前僅德州;6/3 Austin 全都會區無監督上線,核實約 39 台(Austin 28＋Dallas 5＋Houston 6,全為 Model Y)。⚠️ 6/30 首台量產 Cybercab 於 Austin 公開道路工程測試(市中心 34 台、達拉斯 70 台待命,尚未載客)。Waymo 全美約 3,000–4,000 台。放量卡 FSD v15(估 2026 底~2027 初)。',
+   data:[['25/06',12],['25/08',19],['25/10',24],['25/12',28],['26/02',31],['26/04',34],['26/05',33],['26/06',39]]},
+  // 列2：服務營收 | 儲能
+  {id:'tsla_svc',group:'Tesla',name:'服務及其他營收',unit:'億美元',dec:1,color:'#3b82f6',gran:'q',agg:'sum',
+   note:'近 45 度單調上升,隨 FSD 訂閱與超充複利。',
+   data:[['24Q2',26.1],['24Q3',27.9],['24Q4',28.5],['25Q1',26.4],['25Q2',30.5],['25Q3',34.8],['25Q4',33.7],['26Q1',37.5]]},
+  {id:'tsla_storage',group:'Tesla',name:'儲能部署',unit:'GWh',dec:1,color:'#22c55e',gran:'q',agg:'sum',
+   note:'高 beta 變數,單季可左右整體毛利。26Q2 共識 13.8 GWh(+36% QoQ,上海 Megafactory 接近滿產),7/22 財報公佈。',
+   data:[['24Q2',9.4],['24Q3',6.9],['24Q4',11.0],['25Q1',10.4],['25Q2',9.6],['25Q3',12.5],['25Q4',14.2],['26Q1',8.8]]},
+  // 列3：Optimus
+  {id:'tsla_optimus',group:'Tesla',name:'Optimus 累計產量',unit:'台',dec:0,color:'#bc8cff',gran:'m',agg:'last',
+   note:'Fremont V3 產線 7 月底–8 月投產(Model S/X 5 月停產騰線);初期「相當慢」,2026 實際產量估低數千台;一代線目標年產 100 萬、Giga Texas 二廠 2027。投產後由 Claude 更新記錄。',
+   data:[['25/12',0],['26/03',0],['26/06',0]]}
+];
+
+function cMetric(id){return C_METRICS.find(function(m){return m.id===id;});}
+function cFmt(v,dec){if(v==null)return '—';return Number(v).toLocaleString(undefined,{minimumFractionDigits:dec,maximumFractionDigits:dec});}
+// series for a single-series metric
+function cSeries(m){return m.data.map(function(d){return {t:d[0],v:d[1],u:false};});}
+// series for one sub-series of a multi metric
+function cSub(m,seg){return seg.data.map(function(d){return {t:d[0],v:d[1],u:false};});}
+// ---- 時間粒度切換 (月/季/年) ----
+var cView={};            // metricId -> 'm'|'q'|'y' (預設 = 原生粒度)
+function cViewOf(m){return cView[m.id]||m.gran||'q';}
+function pad2(n){return ('0'+n).slice(-2);}
+function cParse(t){
+  var m;
+  if(m=/^(\d{2})\/(\d{1,2})$/.exec(t)){return {y:2000+(+m[1]),q:Math.ceil((+m[2])/3),m:+m[2]};}
+  if(m=/^(\d{2})Q(\d)$/.exec(t)){return {y:2000+(+m[1]),q:+m[2],m:null};}
+  if(m=/^(\d{4})$/.exec(t)){return {y:+m[1],q:null,m:null};}
+  return null;
+}
+function cAgg(points,from,to,agg){
+  if(from===to)return points.slice();
+  var buckets={},order=[];
+  points.forEach(function(p){
+    var pr=cParse(p.t),key,label;
+    if(!pr){key='_'+p.t;label=p.t;}
+    else if(to==='y'){key='y'+pr.y;label=String(pr.y);}
+    else if(to==='q'){var q=pr.q||1;key='y'+pr.y+'q'+q;label=pad2(pr.y%100)+'Q'+q;}
+    else {key=p.t;label=p.t;}
+    if(!(key in buckets)){buckets[key]={t:label,vals:[],u:false,n:0};order.push(key);}
+    buckets[key].vals.push(p.v);if(p.u)buckets[key].u=true;if(p.v!=null)buckets[key].n++;
+  });
+  var res=order.map(function(k){
+    var b=buckets[k],nums=b.vals.filter(function(v){return v!=null;});
+    var v=nums.length?(agg==='last'?nums[nums.length-1]:nums.reduce(function(s,x){return s+x;},0)):null;
+    return {t:b.t,v:v,u:b.u,key:k};
+  });
+  if(to==='y'&&agg==='sum'&&res.length){
+    var exp=from==='m'?12:(from==='q'?4:1),lb=res[res.length-1];
+    if(buckets[lb.key].n<exp)lb.t=lb.t+' YTD';
+  }
+  return res;
+}
+// 套用視角後的序列
+function cSeriesV(m){return cAgg(cSeries(m),m.gran||'q',cViewOf(m),m.agg||'sum');}
+function cSubV(m,seg){return cAgg(cSub(m,seg),m.gran||'q',cViewOf(m),m.agg||'sum');}
+function cTotalV(m){
+  var tot=m.multi.filter(function(s){return s.total;})[0];
+  if(tot)return cSubV(m,tot);
+  var map={},order=[];
+  m.multi.forEach(function(seg){cSubV(m,seg).forEach(function(p){if(!(p.t in map)){map[p.t]=0;order.push(p.t);}map[p.t]+=(p.v||0);});});
+  return order.map(function(t){return {t:t,v:map[t],u:false};});
+}
+function cGranBtns(m){
+  var order=['m','q','y'],ni=order.indexOf(m.gran||'q'),avail=order.slice(ni);
+  if(avail.length<2)return '';
+  var cur=cViewOf(m),nm={m:'月',q:'季',y:'年'};
+  return '<span class="gtog">'+avail.map(function(g){return '<button class="'+(g===cur?'on':'')+'" data-gran="'+g+'" data-mid="'+m.id+'">'+nm[g]+'</button>';}).join('')+'</span>';
+}
+function cLast(series){for(var i=series.length-1;i>=0;i--){if(series[i].v!=null)return series[i];}return null;}
+function cGrowth(series){
+  var pts=series.filter(function(p){return p.v!=null;});
+  if(pts.length<2)return null;
+  var a=pts[pts.length-1].v,b=pts[pts.length-2].v,f=pts[0].v;
+  return {qoq:b===0?null:(a-b)/Math.abs(b)*100, tot:f===0?null:(a-f)/Math.abs(f)*100};
+}
+function cBadge(label,pct,neutral){
+  if(pct==null)return '<span class="gbadge">'+label+' <b>—</b></span>';
+  var cls=neutral?'':(pct>=0?'up':'down');
+  var arrow=pct>=0?'▲':'▼';
+  return '<span class="gbadge '+cls+'">'+label+' <b>'+arrow+' '+(pct>=0?'+':'')+pct.toFixed(1)+'%</b></span>';
+}
+function cCardHTML(m){
+  var headColor=m.color||(m.multi&&m.multi[0]&&m.multi[0].color)||'#5b8def';
+  var series=m.multi?cTotalV(m):cSeriesV(m);
+  var last=cLast(series), g=cGrowth(series), view=cViewOf(m);
+  var pl=view==='y'?'年增':(view==='q'?'季增':'月增');
+  var rows='';
+  if(m.multi){
+    // per-segment latest(視角)
+    m.multi.forEach(function(seg){
+      var sl=cLast(cSubV(m,seg));
+      rows+='<tr><td style="color:'+seg.color+'">'+seg.name+(seg.total?'（總）':'')+'</td><td>'+(sl?cFmt(sl.v,m.dec):'—')+'</td></tr>';
+    });
+  }else{
+    series.forEach(function(p){
+      rows+='<tr><td>'+p.t+'</td><td>'+cFmt(p.v,m.dec)+'</td></tr>';
+    });
+  }
+  return ''
+    +'<div class="mh"><div><div class="mt">'+m.name+'</div><div class="mu">單位：'+m.unit+'</div></div>'
+    +'<div class="latest"><div class="lv" style="color:'+headColor+'">'+(last?cFmt(last.v,m.dec):'—')+'</div><div class="ll">最新 '+(last?last.t:'')+'</div></div></div>'
+    +'<div class="mnote">'+m.note+'</div>'
+    +'<div class="growth">'+cBadge(pl,g?g.qoq:null,m.neutral)+cBadge('累計',g?g.tot:null,m.neutral)+cGranBtns(m)+'</div>'
+    +'<div class="mchart"><canvas id="cv_'+m.id+'"></canvas></div>'
+    +'<details class="rec"><summary>查看所有記錄</summary>'
+    +'<table class="rectbl"><tbody>'+rows+'</tbody></table></details>';
+}
+function cDrawChart(m){
+  var g={color:'rgba(255,255,255,.05)'};
+  var ctx=document.getElementById('cv_'+m.id);if(!ctx)return;
+  if(cCharts[m.id]){cCharts[m.id].destroy();}
+  var labels,datasets,showLegend;
+  if(m.multi){
+    showLegend=true;
+    labels=cSubV(m,m.multi[0]).map(function(p){return p.t;});
+    datasets=m.multi.map(function(seg){
+      var ss=cSubV(m,seg);
+      return {label:seg.name,data:ss.map(function(p){return p.v;}),borderColor:seg.color,
+        backgroundColor:'transparent',tension:.25,borderWidth:seg.dash?2:2.5,fill:false,spanGaps:true,
+        borderDash:seg.dash?[5,4]:[],pointRadius:2,pointHoverRadius:5,pointBackgroundColor:seg.color};
+    });
+  }else{
+    showLegend=false;
+    var s=cSeriesV(m);labels=s.map(function(p){return p.t;});
+    datasets=[{label:m.name,data:s.map(function(p){return p.v;}),borderColor:m.color,
+      backgroundColor:'rgba(91,141,239,.08)',tension:.25,borderWidth:2.5,fill:true,spanGaps:true,
+      pointBackgroundColor:m.color,pointBorderColor:m.color,pointRadius:2.5,pointHoverRadius:6}];
+  }
+  cCharts[m.id]=new Chart(ctx,{type:'line',data:{labels:labels,datasets:datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:showLegend,labels:{boxWidth:10,padding:8,font:{size:10}}},
+        tooltip:{callbacks:{label:function(c){return (m.multi?c.dataset.label+': ':'')+cFmt(c.parsed.y,m.dec)+' '+m.unit;}}}},
+      scales:{x:{grid:g,ticks:{font:{size:9},maxRotation:0,autoSkip:true,maxTicksLimit:10}},
+        y:{grid:g,ticks:{font:{size:10},callback:function(v){return cFmt(v,m.dec);}}}}}});
+}
+function cRenderOne(m){var card=document.getElementById('card_'+m.id);if(card){card.innerHTML=cCardHTML(m);cDrawChart(m);}}
+function cRenderAll(){
+  [['SUM','cGroupSUM'],['SpaceX','cGroupSpaceX'],['Tesla','cGroupTesla']].forEach(function(pair){
+    var box=document.getElementById(pair[1]);if(!box)return;box.innerHTML='';
+    C_METRICS.filter(function(m){return m.group===pair[0];}).forEach(function(m){
+      var d=document.createElement('div');d.className='mcard';d.id='card_'+m.id;d.innerHTML=cCardHTML(m);box.appendChild(d);
+    });
+  });
+  C_METRICS.forEach(cDrawChart);
+}
+function initChartsC(){
+  cRenderAll();
+  document.getElementById('viewC').addEventListener('click',function(e){
+    var el=e.target;
+    if(el.getAttribute&&el.getAttribute('data-gran')){
+      var mid=el.getAttribute('data-mid');cView[mid]=el.getAttribute('data-gran');cRenderOne(cMetric(mid));
+    }
+  });
+}
+</script>
+</div><!-- /viewC -->
+
+</div><!-- /appwrap -->
+
+<button id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ 回到頂部</button>
+
+<script>
+let tInit=false, sInit=false;
+const CHARTS=[];
+const FMT = n => n==null ? '\u2014' : n.toLocaleString();
+function showView(v){
+  document.getElementById('viewT').classList.toggle('active',v==='T');
+  document.getElementById('viewS').classList.toggle('active',v==='S');
+  document.getElementById('viewC').classList.toggle('active',v==='C');
+  document.getElementById('btnT').classList.toggle('active',v==='T');
+  document.getElementById('btnS').classList.toggle('active',v==='S');
+  document.getElementById('btnC').classList.toggle('active',v==='C');
+  if(v==='T'){ if(!tInit){initChartsT();tInit=true;} else {CHARTS.forEach(c=>c.resize());} }
+  if(v==='S'){ if(!sInit){initChartsS();sInit=true;} else {CHARTS.forEach(c=>c.resize());} }
+  if(v==='C'){ if(!cInit){initChartsC();cInit=true;} else {Object.keys(cCharts).forEach(k=>cCharts[k].resize());} }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('scroll',function(){var b=document.getElementById('toTop');if(b)b.style.display=window.scrollY>400?'block':'none';});
+function _deadFcCharts_removed(){ return;
+  var L=['現在','+3月','+6\u20139月','+12月'];
+  new Chart(document.getElementById('tslaFcChart'),{type:'line',data:{labels:L,datasets:[
+    {label:'牛市',data:[396,440,510,560],borderColor:'#3fb950',tension:.3,borderWidth:2.5,fill:{target:2,above:'rgba(148,163,184,.08)',below:'rgba(148,163,184,.08)'}},
+    {label:'基準',data:[396,400,405,410],borderColor:'#e3b341',tension:.3,borderWidth:2.5},
+    {label:'熊市',data:[396,330,270,220],borderColor:'#f85149',tension:.3,borderWidth:2.5},
+    {label:'分析師均值',data:[410,410,410,410],borderColor:'#9aa7b5',borderDash:[4,4],borderWidth:1.5,pointRadius:0}
+  ]},options:fOpts});
+  new Chart(document.getElementById('spxFcChart'),{type:'line',data:{labels:L,datasets:[
+    {label:'牛市',data:[185,215,260,295],borderColor:'#3fb950',tension:.3,borderWidth:2.5,fill:{target:2,above:'rgba(148,163,184,.08)',below:'rgba(148,163,184,.08)'}},
+    {label:'基準',data:[185,190,195,200],borderColor:'#e3b341',tension:.3,borderWidth:2.5},
+    {label:'熊市',data:[185,150,120,105],borderColor:'#f85149',tension:.3,borderWidth:2.5},
+    {label:'分析師均值',data:[188,188,188,188],borderColor:'#9aa7b5',borderDash:[4,4],borderWidth:1.5,pointRadius:0}
+  ]},options:fOpts});
+  new Chart(document.getElementById('roboChart'),{type:'line',data:{labels:['2025/6 上線*','2026/4 峰值','2026/5 波動','2026/6 現況'],datasets:[
+    {label:'Austin 無監督車隊',data:[12,25,14,28],borderColor:'#f85149',backgroundColor:'rgba(248,81,73,.12)',tension:.3,fill:true,borderWidth:2.5,pointRadius:4}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12,padding:12}},tooltip:{callbacks:{label:function(c){return c.parsed.y+' 台';}}}},scales:{x:{grid:g},y:{grid:g,beginAtZero:true,ticks:{callback:function(v){return v+' 台';}}}}}});
+}
+/* ===== 頂部「預期 vs 實際」成績單（財報公佈後：只改 actual 值，顏色/圖自動出來） ===== */
+var EXPECT_T={sub:'交付／儲能 7/2 · 財報 7/22 盤後',items:[
+  {name:'交付量',unit:'萬台',dec:1,expect:40.6,actual:null,date:'7/2',note:'共識 406,024 台(+5.7% YoY)',prev:[['上季',35.8],['同期',38.4]],goto:'tslaDeliv'},
+  {name:'儲能部署',unit:'GWh',dec:1,expect:13.8,actual:null,date:'7/2',note:'+36% QoQ;Cantor 看 15.7',prev:[['上季',8.8],['同期',9.6]],goto:'tslaStorage'},
+  {name:'總營收',unit:'億美元',dec:1,expect:245.2,actual:null,date:'7/22',note:'約 +9% YoY',prev:[['上季',223.9],['同期',225.0]],goto:'tslaBeatRev'},
+  {name:'調整後 EPS',unit:'美元',dec:2,expect:0.44,actual:null,date:'7/22',note:'區間 0.42–0.46',prev:[['上季',0.41],['同期',0.40]],goto:'tslaBeatRev'},
+  {name:'非 GAAP 淨利',unit:'億美元',dec:1,expect:15.5,actual:null,date:'7/22',note:'EPS×35.2 億股推算',prev:[['上季',14.5],['同期',13.9]],goto:'tslaProfit'},
+  {name:'毛利率',unit:'%',dec:1,expect:20.0,actual:null,date:'7/22',note:'市場門檻:守住 20%+',prev:[['上季',21.1],['同期',17.2]],goto:'tslaMargin'}
+]};
+var EXPECT_S={sub:'財報日未定(多方傳 8/6、一說 9/2)',items:[
+  {name:'Q2 發射次數',unit:'發',dec:0,expect:39,actual:41,date:'已知(公開)',note:'12+13+16(至 6/29),單季新高',prev:[['上季',36],['同期',41]],goto:'spxLaunch'},
+  {name:'Starlink 訂戶',unit:'萬戶',dec:0,expect:1150,actual:1200,date:'6/4 官方',note:'160+ 國,提前達標',prev:[['上季',1030],['同期',650,1]],goto:'spxSubs'},
+  {name:'總營收',unit:'億美元',dec:0,expect:100,actual:null,date:'財報日',note:'估 95–105,Colossus 租賃首入帳',prev:[['上季',53,1],['同期',45,1]],goto:'spxBeatRev'},
+  {name:'Starlink 營收',unit:'億美元',dec:0,expect:50,actual:null,date:'財報日',note:'估 48–52,漲價後量價齊升?',prev:[['上季',35,1],['同期',27,1]],goto:'spxRev'},
+  {name:'AI 段營收',unit:'億美元',dec:0,expect:40,actual:null,date:'財報日',note:'租賃 ~34 億＋Grok/X',prev:[['上季',8.2],['同期',8,1]],goto:'spxAI'},
+  {name:'AI 段營業虧損',unit:'億美元',dec:1,expect:24.7,actual:null,date:'財報日',invert:true,showNeg:true,note:'Q1 −24.7,看能否收斂',prev:[['上季',24.7],['同期',16,1]],goto:'spxAI'},
+  {name:'AI capex',unit:'億美元',dec:0,expect:77,actual:null,date:'財報日',neutral:true,note:'Q1 77;IPO 落袋 850 億後看加速/放緩',prev:[['上季',77],['同期',25,1]],goto:'spxTree'}
+]};
+function eFmt(v,dec){return Number(v).toLocaleString(undefined,{minimumFractionDigits:dec,maximumFractionDigits:dec});}
+function renderExpect(gridId,sumId,cfg){
+  var el=document.getElementById(gridId),sm=document.getElementById(sumId);
+  if(!el)return;
+  var ok=0,bad=0,wait=0,html='';
+  cfg.items.forEach(function(it){
+    var st,badge,diffTxt='',neg=it.showNeg?'−':'';
+    var d=it.actual==null?0:(it.actual-it.expect)/Math.abs(it.expect)*100;
+    if(it.invert){diffTxt=(d<=0?'收斂 ':'擴大 ')+Math.abs(d).toFixed(1)+'%';}
+    else{diffTxt=(d>=0?'+':'')+d.toFixed(1)+'%';}
+    if(it.actual==null){st='wait';wait++;badge='⏳ 待公佈 · '+it.date;}
+    else if(it.neutral){st='neu';badge='ℹ️ '+diffTxt+' vs 預期';}
+    else{
+      var better=it.invert?(it.actual<=it.expect):(it.actual>=it.expect);
+      st=better?'ok':'bad'; better?ok++:bad++;
+      badge=(better?'✅ 超預期 ':'❌ 遜預期 ')+diffTxt;
+    }
+    var maxv=Math.max(Math.abs(it.expect),Math.abs(it.actual||0))*1.18||1;
+    var mw=Math.abs(it.expect)/maxv*100;
+    var fw=it.actual==null?mw:Math.abs(it.actual)/maxv*100;
+    var fc=st==='ok'?'#22c55e':st==='bad'?'#ef4444':st==='neu'?'#5b8def':'rgba(148,163,184,.35)';
+    var main=it.actual==null?eFmt(it.expect,it.dec):eFmt(it.actual,it.dec);
+    var cmp=it.actual==null?'實際:待公佈':'預期 '+neg+eFmt(it.expect,it.dec)+' '+it.unit;
+    var prevHtml='';
+    if(it.prev){
+      var cur=it.actual!=null?it.actual:it.expect;
+      it.prev.forEach(function(p){
+        var pd=(cur-p[1])/Math.abs(p[1])*100;
+        var dirGood=it.invert?pd<=0:pd>=0;
+        var cls=it.neutral?'':(dirGood?' class="up"':' class="down"');
+        prevHtml+=(prevHtml?' ｜ ':'')+p[0]+' '+neg+eFmt(p[1],it.dec)+(p[2]?'(估)':'')
+          +' <b'+cls+'>'+(pd>=0?'▲':'▼')+Math.abs(pd).toFixed(0)+'%</b>';
+      });
+      prevHtml='<div class="eprev">'+prevHtml+'</div>';
+    }
+    html+='<div class="ecard '+st+(it.goto?' link':'')+'"'+(it.goto?' data-goto="'+it.goto+'" title="點擊跳到完整歷史圖"':'')+'>'
+      +'<div class="en"><span>'+it.name+'</span><span class="edate">'+it.date+'</span></div>'
+      +'<div class="ev">'+neg+main+'<small> '+it.unit+'</small></div>'
+      +'<div class="ecmp">'+cmp+(it.note?'｜'+it.note:'')+'</div>'
+      +prevHtml
+      +'<div class="ebar"><div class="fill" style="width:'+fw.toFixed(1)+'%;background:'+fc+'"></div>'
+      +(it.actual!=null?'<div class="mark" style="left:'+mw.toFixed(1)+'%"></div>':'')+'</div>'
+      +'<div class="ebadge '+st+'">'+badge+'</div>'
+      +(it.goto?'<span class="elink">查看歷史 ↓</span>':'')
+      +'</div>';
+  });
+  el.innerHTML=html;
+  if(sm)sm.innerHTML=cfg.sub+' ｜ 本季成績單:<b style="color:#22c55e">'+ok+' 超預期</b> · <b style="color:#ef4444">'+bad+' 遜預期</b> · <b style="color:#64748b">'+wait+' 待公佈</b>';
+  Array.prototype.forEach.call(el.querySelectorAll('.ecard.link'),function(c){
+    c.addEventListener('click',function(){gotoEl(c.getAttribute('data-goto'));});
+  });
+}
+function gotoEl(id){
+  var e=document.getElementById(id); if(!e)return;
+  var box=e.closest('.chartbox')||e;
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+  box.classList.remove('flashbx'); void box.offsetWidth; box.classList.add('flashbx');
+}
+window.addEventListener('DOMContentLoaded',function(){
+  if(typeof Chart!=='undefined'){ initChartsC(); cInit=true; }
+  renderExpect('egridT','esumT',EXPECT_T);
+  renderExpect('egridS','esumS',EXPECT_S);
+});
+</script>
+</body>
+</html>
